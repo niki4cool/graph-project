@@ -1,0 +1,23 @@
+@import "../../styles/variables";
+
+//.list{
+//  overflow-y: auto;
+//}
+
+.list > *:first-child {
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+}
+
+.list > *:last-child {
+  border-bottom-left-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+}
+
+.list > *:last-child > *:first-child {
+  border-bottom-left-radius: $border-radius;
+}
+
+.list > *:last-child > *:last-child {
+  border-bottom-right-radius: $border-radius;
+}

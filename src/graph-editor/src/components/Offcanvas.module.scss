@@ -1,0 +1,13 @@
+@import "src/styles/variables";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  width: 300px;
+  bottom: 0;
+  padding: map-get($spacers, 1);
+  background-color: $black32;
+  transition-duration: 0.25s;
+  z-index: 10;
+}

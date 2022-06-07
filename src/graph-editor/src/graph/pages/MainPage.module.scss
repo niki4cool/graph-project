@@ -1,0 +1,28 @@
+@import "../../styles/variables";
+
+
+.main {
+  overflow: visible;
+  background: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%);
+  padding: 5rem;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+p {
+  font-size: 1.3rem;
+}
+
+.header {
+  font-size: 3rem;
+}
+
+.main button{
+  font-size: 1.5rem;
+}
+
+.forms {
+  width: 20rem;
+}

@@ -1,0 +1,21 @@
+@import "~bootstrap/scss/functions";
+
+$primary: #0341ee;
+$primary-light: #03A9F4;
+//$primary: #0277BD;
+
+$body-bg: black;
+$input-color: white;
+$black32: #323436;
+$black21: #212529;
+$black13: #131416;
+
+$input-focus-border-color: white;
+$input-focus-box-shadow: 0;
+
+//$modal-content-color: white;
+$modal-content-bg: $black32;
+$modal-header-border-width: 0;
+
+
+@import "~bootstrap/scss/variables";

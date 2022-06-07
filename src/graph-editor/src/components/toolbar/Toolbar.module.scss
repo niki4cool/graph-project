@@ -1,0 +1,31 @@
+@import "src/styles/variables";
+
+
+.toolbar {
+  display: flex;
+  flex-direction: row;
+}
+
+.toolbar > .item,
+.toolbar > :global(.dropdown) {
+  padding: map-get($spacers, 1) map-get($spacers, 2);
+}
+
+:global(.show):global(.dropdown) > .item {
+  color: shade-color($white, 30);
+}
+
+.item {
+  color: $white;
+  cursor: pointer;
+  user-select: none;
+  transition-duration: 0.2s;
+}
+
+.item:hover{
+  color: shade-color($white, 15);
+}
+
+.item:active {
+  color: shade-color($white, 30);
+}

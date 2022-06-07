@@ -1,0 +1,32 @@
+@import "/src/styles/variables";
+
+.item {
+  display: flex;
+  background-color: $black21;
+  align-items: center;
+}
+
+.item > * {
+  padding: map-get($spacers, 2);
+}
+
+.item > button {
+  background-color: $black21;
+  color: white;
+  border-color: white;
+  border-width: 0;
+  border-left-width: 1px;
+}
+
+.item > button:hover {
+  background-color: tint-color($black21, 15);
+}
+
+.item > button:active {
+  background-color: tint-color($black21, 30);
+}
+
+.children{
+  cursor: pointer;
+  width: 100%;
+}

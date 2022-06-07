@@ -1,0 +1,9 @@
+@import "src/styles/variables";
+
+.label {
+  cursor: pointer;
+}
+
+.tooltipClicked > * {
+  color: $primary-light;
+}

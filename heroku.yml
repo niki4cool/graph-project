@@ -1,0 +1,9 @@
+﻿setup:
+  addons:
+    - plan: heroku-postgresql
+  config:
+    ENVIRONMENT_HEROKU: true
+
+build:
+  docker:
+    web: Dockerfile

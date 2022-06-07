@@ -1,0 +1,44 @@
+import React, {FC, useEffect} from "react";
+import CenteredContainer from "components/CentredContainer";
+import {Button, Spinner} from "react-bootstrap";
+import {graphsApi} from "graph/graphsApi";
+import Highlight from "components/Highlight";
+
+export interface NotFoundPageProps {
+  graphId: string;
+  onCreate?: () => void;
+  onDismiss?: () => void;
+}
+
+const NotFoundPage: FC<NotFoundPageProps> = React.memo(({graphId, onCreate, onDismiss}) => {
+  const [putGraph, {isLoading, isSuccess}] = graphsApi.usePutGraphMutation();
+
+  useEffect(() => {
+    if (isSuccess)
+      onCreate && onCreate();
+  }, [isSuccess, onCreate]);
+
+  return (
+    <CenteredContainer>
+      <h1>
+        Graph <Highlight text={graphId}/> not exist.
+      </h1>
+      <p>Do you want to create a <Highlight text={graphId}/> graph?</p>
+      {isLoading
+        ? <Spinner animation="border"/>
+        : (
+          <div>
+            <Button variant="secondary" className="me-5" onClick={onDismiss}>
+              No
+            </Button>
+            <Button variant="light" onClick={() => putGraph(graphId)}>
+              Yes
+            </Button>
+          </div>
+        )
+      }
+    </CenteredContainer>
+  );
+});
+NotFoundPage.displayName = "NotFoundPage";
+export default NotFoundPage;

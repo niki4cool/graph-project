@@ -1,0 +1,6 @@
+﻿services:
+  msSql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - "1433:1433"
+    

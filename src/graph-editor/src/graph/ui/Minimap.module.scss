@@ -1,0 +1,51 @@
+@import "src/styles/variables";
+
+.show {
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  right: 0;
+  z-index: 100;
+  transition-duration: 0.25s;
+}
+
+.container.show {
+  bottom: 0;
+}
+
+.container:not(.show){
+  bottom: -300px;
+}
+
+.button {
+  display: inline-flex;
+  align-self: end;
+  margin-right: map-get($spacers, 2);
+  background-color: $black32;
+  cursor: pointer;
+  padding: 0 map-get($spacers, 3);
+  border-radius: $border-radius $border-radius 0 0;
+}
+
+.button.show {
+  background-color: $black13;
+}
+
+.button:hover {
+  background-color: $black21;
+}
+
+
+
+.container :global(.force-graph-container) {
+  //width: 300px;
+  //height: 300px;
+}
+
+.container canvas {
+  border-top-left-radius: $border-radius;
+  background-color: $black13;
+}

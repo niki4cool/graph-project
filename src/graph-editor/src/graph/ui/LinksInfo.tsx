@@ -1,0 +1,49 @@
+import React, {FC} from "react";
+import {useAppDispatch, useAppSelector} from "store";
+import graphDataSlice, {
+  asSourceLinksSelector,
+  asTargetLinksSelector,
+  GraphLink,
+} from "graph/graphDataSlice";
+import List from "components/lists/List";
+import ListItem from "components/lists/ListItem";
+
+export interface LinksInfoProps {
+  nodeId: string;
+  onNodeClick?: (nodeId: string) => void;
+}
+
+const LinksInfo: FC<LinksInfoProps> = React.memo(({nodeId, onNodeClick}) => {
+  const asSourceLinks = useAppSelector(asSourceLinksSelector(nodeId));
+  const asTargetLinks = useAppSelector(asTargetLinksSelector(nodeId));
+  const dispatch = useAppDispatch();
+
+  const renderLink = (link: GraphLink, nodeId: string) =>
+    <ListItem
+      children={nodeId}
+      onRemoveClick={() => dispatch(graphDataSlice.actions.deleteLink(link))}
+      onChildrenClick={() => onNodeClick && onNodeClick(nodeId)}
+      key={link.target + link.source}
+    />;
+
+  return (
+    <>
+      <List
+        items={asSourceLinks}
+        header="Points to"
+        emptyHeader="Doesn't point no any nodes"
+        className="mb-3"
+        renderItem={link => renderLink(link, link.target)}
+      />
+
+      <List
+        items={asTargetLinks}
+        header="Points from"
+        emptyHeader="No nodes points to it"
+        renderItem={link => renderLink(link, link.source)}
+      />
+    </>
+  );
+});
+LinksInfo.displayName = "LinksList";
+export default LinksInfo;

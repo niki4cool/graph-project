@@ -1,15 +1,18 @@
 import React, {FC, useEffect, useRef} from "react";
 import {Button, Form} from "react-bootstrap";
 import {FormikProvider, useFormik} from "formik";
-import FormInlineInput from "components/forms/FormInlineInput";
 import styles from "graph/ui/menus/AddNodeContextMenu.module.scss";
 import * as yup from "yup";
 import ContextMenu, {ContextMenuProps} from "components/ContextMenu";
 import {useAppSelector} from "store";
 import {graphDataSelector} from "graph/graphDataSlice";
+import FormInput from "components/forms/FormInput";
+import {primaryLightColor} from "vars";
 
 export interface AddNodeFormData {
   id: string;
+  color: string;
+  type?: string;
 }
 
 export const addNodeValidationSchema = yup.object({
@@ -23,10 +26,10 @@ export interface AddNodeContextMenuProps extends ContextMenuProps {
 const AddNodeContextMenu: FC<AddNodeContextMenuProps> =
   React.memo(({onAdd, ...props}) => {
     const graphData = useAppSelector(graphDataSelector);
-    const inputRef = useRef<HTMLInputElement>(null);
+    const startFocusRef = useRef<HTMLInputElement>(null);
 
     const formik = useFormik<AddNodeFormData>({
-      initialValues: {id: ""},
+      initialValues: {id: "", color: primaryLightColor},
       validationSchema: addNodeValidationSchema,
       validate: data => {
         const isIdUnique = graphData.nodes.findIndex(x => x.id === data.id)! < 0;
@@ -41,7 +44,7 @@ const AddNodeContextMenu: FC<AddNodeContextMenuProps> =
 
     useEffect(() => {
       if (props.position)
-        inputRef.current?.focus();
+        startFocusRef.current?.focus();
     }, [props.position]);
 
     return (
@@ -53,10 +56,16 @@ const AddNodeContextMenu: FC<AddNodeContextMenuProps> =
           <Form
             noValidate
             onSubmit={formik.handleSubmit}
+            className={styles.form}
           >
-            <FormInlineInput field="id" placeholder="Id" className={styles.input} ref={inputRef}>
-              <Button type="submit" variant="light">Add node</Button>
-            </FormInlineInput>
+            <FormInput field="id" placeholder="Id" ref={startFocusRef}
+                       className={`${styles.id} rounded-0 rounded-top`}/>
+            <div className={styles.group}>
+              <FormInput field="type" placeholder="Type" noValidate className={styles.type}/>
+              <FormInput field="color" type={"color"} placeholder="Color" noValidate
+                         className={styles.colorInput}/>
+              <Button type="submit" variant="light" className={styles.btn}>Add node</Button>
+            </div>
           </Form>
         </FormikProvider>
       </ContextMenu>

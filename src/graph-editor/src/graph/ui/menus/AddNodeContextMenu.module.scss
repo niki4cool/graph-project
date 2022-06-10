@@ -1,3 +1,40 @@
-.input {
-  width: 125px !important;
+@import "src/styles/variables";
+
+.form {
+  width: 250px;
+}
+
+.form * {
+  border-radius: 0;
+}
+
+.colorInput {
+  border-radius: 0;
+  max-width: 40px;
+}
+
+.group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.group > input, .group > button {
+  flex: 1 1 auto;
+  width: 1%;
+  border-radius: 0;
+}
+
+.id{
+  border-bottom-width: 0;
+}
+
+.type {
+  border-bottom-left-radius: $border-radius !important;
+  border-right-width: 0!important;
+}
+
+.btn {
+  border-bottom-right-radius: $border-radius !important;
+  border-left-width: 0;
 }

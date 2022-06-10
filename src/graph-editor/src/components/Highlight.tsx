@@ -2,7 +2,7 @@ import React, {FC} from "react";
 import styles from "./Highlight.module.scss";
 
 export interface HighlightProps {
-  text: string;
+  text?: string;
 }
 
 const Highlight: FC<HighlightProps> = React.memo(({text}) => {

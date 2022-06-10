@@ -1,10 +1,16 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "store";
 
+export interface GraphNodeMeta {
+  color: string;
+  type?: string;
+}
+
 export interface GraphNode {
   id: string;
   x: number;
   y: number;
+  meta: GraphNodeMeta;
 }
 
 export interface GraphLink {

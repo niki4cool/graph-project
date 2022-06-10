@@ -8,5 +8,7 @@ namespace GraphEditor.DataTypes
         public string Id { get; set; } = String.Empty;
         public float X { get; set; }
         public float Y { get; set; }
+
+        public Meta Meta { get; set; } = default!;
     }
 }

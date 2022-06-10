@@ -5,6 +5,7 @@ import styles from "./Minimap.module.scss";
 import cn from "classnames";
 import {ForceGraphInstance} from "force-graph";
 import {useFindNode} from "graph/hooks";
+import {primaryLightColor} from "vars";
 
 export interface MinimapProps {
   graphData: GraphData;
@@ -34,7 +35,7 @@ const Minimap: FC<MinimapProps> = React.memo(({graphData, onNodeClick, startOpen
         ref={graphRef}
         graphData={graphData}
         cooldownTicks={0}
-        nodeAutoColorBy={node => node.id?.toString() || ""}
+        nodeColor={node => findNode(node.id)?.meta.color || primaryLightColor}
         nodeLabel={node => node.id?.toString() || ""}
         linkColor={() => "#ffffff"}
         enableZoomInteraction={false}

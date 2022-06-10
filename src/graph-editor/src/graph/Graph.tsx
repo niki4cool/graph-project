@@ -21,6 +21,7 @@ import HelpMenu from "graph/ui/menus/HelpMenu";
 import NodesListMenu from "graph/ui/menus/NodesListMenu";
 import CopyLabel from "components/CopyLabel";
 import Minimap from "graph/ui/Minimap";
+import {primaryLightColor} from "vars";
 
 export interface GraphProps {
   graphId: string;
@@ -123,7 +124,7 @@ const Graph: FC<GraphProps> = React.memo(({graphId}) => {
           ref={graphRef}
           graphData={graphData}
           cooldownTicks={0}
-          nodeAutoColorBy={node => node.id?.toString() || ""}
+          nodeColor={node => findNode(node.id)?.meta.color || primaryLightColor}
           nodeLabel={node => node.id?.toString() || ""}
           linkColor={() => "#ffffff"}
           nodeRelSize={10}
@@ -138,7 +139,7 @@ const Graph: FC<GraphProps> = React.memo(({graphId}) => {
             if (!node)
               return;
 
-            const newNode: GraphNode = {id: node.id, x: nodeObj.x!, y: nodeObj.y!};
+            const newNode: GraphNode = {...node, x: nodeObj.x!, y: nodeObj.y!};
             dispatch(graphDataSlice.actions.updateNode(newNode));
           }}
 
@@ -194,7 +195,11 @@ const Graph: FC<GraphProps> = React.memo(({graphId}) => {
           const newNode: GraphNode = {
             id: formData.id,
             x: addNodePosition.x,
-            y: addNodePosition.y
+            y: addNodePosition.y,
+            meta: {
+              color: formData.color,
+              type: formData.type
+            }
           };
           dispatch(graphDataSlice.actions.addNode(newNode));
           setAddNodeCmPosition(undefined);

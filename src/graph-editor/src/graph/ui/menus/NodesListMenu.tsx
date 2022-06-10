@@ -3,6 +3,7 @@ import {GraphNode} from "graph/graphDataSlice";
 import List from "components/lists/List";
 import ListItem from "components/lists/ListItem";
 import Sidebar from "components/Sidebar";
+import NodeLongName from "graph/ui/menus/NodeLongName";
 
 export interface NodesListMenuProps {
   nodes: GraphNode[];
@@ -21,7 +22,7 @@ const NodesListMenu: FC<NodesListMenuProps> =
           items={nodes}
           renderItem={node =>
             <ListItem
-              children={node.id}
+              children={<NodeLongName nodeId={node.id}/>}
               key={node.id}
               onRemoveClick={() => onNodeDelete && onNodeDelete(node)}
               onChildrenClick={() => onNodeClick && onNodeClick(node)}

@@ -16,6 +16,11 @@ namespace GraphEditor.Models
             modelBuilder.Entity<GraphRecord>()
                 .OwnsOne(p => p.Data)
                 .OwnsMany(p => p.Nodes);
+
+            modelBuilder.Entity<GraphRecord>()
+                .OwnsOne(p => p.Data)
+                .OwnsMany(p => p.Nodes)
+                .OwnsOne(p => p.Meta);
         }
 
         public DbSet<GraphRecord> GraphRecords { get; set; } = default!;

@@ -25,9 +25,14 @@ const NodeInspector: FC<NodeInspectorProps>
   return (
     <Offcanvas position="left" show={visible} topOffset={32}>
       <OffcanvasHeader closeButton onHide={onClose} className="pb-0" closeVariant="white">
-        <OffcanvasTitle>Node: <Highlight text={node.id}/></OffcanvasTitle>
+        <OffcanvasTitle><Highlight text={node.id}/></OffcanvasTitle>
       </OffcanvasHeader>
-      <code className="ps-3">({formatNumber(node.x)}, {formatNumber(node.y)})</code>
+      <span className="ms-3">
+        {node.meta.type
+          && <span><Highlight text={node.meta.type}/></span>}
+        <span className="ms-1 text-muted">({formatNumber(node.x)}, {formatNumber(node.y)})</span>
+      </span>
+
       <OffcanvasBody>
         <LinksInfo nodeId={node.id} onNodeClick={onNodeClick}/>
       </OffcanvasBody>

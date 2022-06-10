@@ -92,6 +92,31 @@ namespace GraphEditor.Migrations
 
                                     b2.WithOwner()
                                         .HasForeignKey("GraphDataGraphRecordId");
+
+                                    b2.OwnsOne("GraphEditor.DataTypes.Meta", "Meta", b3 =>
+                                        {
+                                            b3.Property<string>("GraphNodeGraphDataGraphRecordId")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("GraphNodeId")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Color")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Type")
+                                                .HasColumnType("text");
+
+                                            b3.HasKey("GraphNodeGraphDataGraphRecordId", "GraphNodeId");
+
+                                            b3.ToTable("GraphNode");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("GraphNodeGraphDataGraphRecordId", "GraphNodeId");
+                                        });
+
+                                    b2.Navigation("Meta")
+                                        .IsRequired();
                                 });
 
                             b1.Navigation("Links");

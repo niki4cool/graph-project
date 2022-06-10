@@ -1,5 +1,5 @@
 import React from "react";
-import GraphPage from "graph/GraphPage";
+import GraphPage from "graph/pages/GraphPage";
 import {Navigate, Route, Routes,} from "react-router-dom";
 import MainPage from "graph/pages/MainPage";
 

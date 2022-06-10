@@ -7,6 +7,7 @@ import graphDataSlice, {
 } from "graph/graphDataSlice";
 import List from "components/lists/List";
 import ListItem from "components/lists/ListItem";
+import NodeLongName from "graph/ui/menus/NodeLongName";
 
 export interface LinksInfoProps {
   nodeId: string;
@@ -16,11 +17,12 @@ export interface LinksInfoProps {
 const LinksInfo: FC<LinksInfoProps> = React.memo(({nodeId, onNodeClick}) => {
   const asSourceLinks = useAppSelector(asSourceLinksSelector(nodeId));
   const asTargetLinks = useAppSelector(asTargetLinksSelector(nodeId));
+
   const dispatch = useAppDispatch();
 
   const renderLink = (link: GraphLink, nodeId: string) =>
     <ListItem
-      children={nodeId}
+      children={<NodeLongName nodeId={nodeId}/>}
       onRemoveClick={() => dispatch(graphDataSlice.actions.deleteLink(link))}
       onChildrenClick={() => onNodeClick && onNodeClick(nodeId)}
       key={link.target + link.source}

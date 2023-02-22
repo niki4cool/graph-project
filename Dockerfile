@@ -1,11 +1,12 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+﻿FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src/Server
 COPY src/GraphEditor/GraphEditor/GraphEditor.csproj .
 RUN dotnet restore
 COPY src/GraphEditor/GraphEditor/ .
-RUN dotnet publish --no-restore -c Release -o /app
+# Debug Release
+RUN dotnet publish --no-restore -c Debug -o /app
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 as server
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 as server
 WORKDIR /app
 COPY --from=build /app .
 EXPOSE 80
@@ -15,7 +16,13 @@ ENTRYPOINT ["dotnet", "GraphEditor.dll"]
 FROM node:lts-alpine as node-build
 WORKDIR /src/client
 COPY src/graph-editor/package.json .
-RUN npm install --only=prod
+#
+# RUN npm install --only=prod
+# --omit=dev
+# --production
+# --only=prod
+# --production
+RUN npm install --omit=dev
 COPY src/graph-editor/ .
 RUN npm run build
 

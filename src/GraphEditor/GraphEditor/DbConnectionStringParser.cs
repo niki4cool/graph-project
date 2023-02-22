@@ -12,6 +12,10 @@ public static class DbConnectionStringConverter
     {
         var match = urlConnectionStringRegex.Match(urlConnectionString);
         return
-            $"Host={match.Groups["Host"]};Port={match.Groups["Port"]};Database={match.Groups["Database"]};Username={match.Groups["Username"]};Password={match.Groups["Password"]}";
+            $"Host={match.Groups["Host"]};" +
+            $"Port={match.Groups["Port"]};" +
+            $"Database={match.Groups["Database"]};" +
+            $"Username={match.Groups["Username"]};" +
+            $"Password={match.Groups["Password"]}";
     }
 }

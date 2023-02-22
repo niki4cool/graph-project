@@ -13,12 +13,12 @@ services:
   
   adminer:
      image: adminer
-     restart: always
      ports:
         - "8080:8080"
           
   app:
     image: graph-editor
+    restart: always
     build:
       context: .
     environment:
@@ -29,6 +29,7 @@ services:
       - db
         
   dev-server:
+    restart: always
     build:
       context: .
       target: server

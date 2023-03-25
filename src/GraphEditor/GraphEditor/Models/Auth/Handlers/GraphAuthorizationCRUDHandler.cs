@@ -3,37 +3,43 @@ using GraphEditor.Models.Graph;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Identity;
-using System.Reflection.Metadata;
 
 namespace GraphEditor.Models.Auth.Handlers
 {
     public class GraphAuthorizationCRUDHandler :
         AuthorizationHandler<OperationAuthorizationRequirement, GraphRecord>
     {
-        private readonly IUserStore<UserRecord> userStore;
-
-        public GraphAuthorizationCRUDHandler(IUserStore<UserRecord> userStore)
+        protected async override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+                                           OperationAuthorizationRequirement requirement,
+                                           GraphRecord resource)
         {
-            this.userStore = userStore;
-        }
-
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
-                                                   OperationAuthorizationRequirement requirement,
-                                                   GraphRecord resource)
-        {
-            Console.WriteLine(">>> - " + requirement.Name);
-
-            if (context.User.Claims.Any(c => c.Value == resource.ViewRole)
-                && requirement.Name == Operations.Read.Name)
-            {
-                context.Succeed(requirement);
-            }
-            else
+            var userName = context.User.Identity?.Name;
+            if (userName == null)
             {
                 context.Fail();
+                return;
             }
+            var user = await userStore.FindByNameAsync(userName,
+                                            CancellationToken.None);
 
-            return Task.CompletedTask;
+            var canView = context.User.Claims.Any(c =>
+                                            c.Value == resource.ViewRole);
+            var canEdit = context.User.Claims.Any(c =>
+                        c.Value == resource.EditRole);
+            canView |= canEdit; //Editors can view
+
+            if (requirement.Name == Operations.Create.Name)
+                context.Succeed(requirement);
+            else if (requirement.Name == Operations.Read.Name && canView)
+                context.Succeed(requirement);
+            else if (requirement.Name == Operations.Update.Name && canEdit)
+                context.Succeed(requirement);
+            else if (requirement.Name == Operations.Delete.Name && canEdit)
+                context.Succeed(requirement);
+            else
+                context.Fail();
+
+            return;
         }
     }
 }

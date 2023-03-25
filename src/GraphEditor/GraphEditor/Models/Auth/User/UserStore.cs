@@ -15,7 +15,7 @@ namespace GraphEditor.Models.Auth.User
         {
             this.repository = repository;
             this.keyNormalizer = keyNormalizer;
-        }      
+        }
 
         public async Task<IdentityResult> CreateAsync(UserRecord user, CancellationToken cancellationToken)
         {
@@ -41,13 +41,12 @@ namespace GraphEditor.Models.Auth.User
             return await repository.Find(userId);
         }
 
-        public Task<UserRecord?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        public async Task<UserRecord?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(repository
-                                        .AsQueryable()
-                                        .Where(u => u.NormalizedName == normalizedUserName)
-                                        .FirstOrDefault());
+            var users = await repository.AsQueryable();
+            return users.Where(u => u.NormalizedName == normalizedUserName)
+                                        .FirstOrDefault();
         }
 
         public async Task<string?> GetNormalizedUserNameAsync(UserRecord user, CancellationToken cancellationToken)

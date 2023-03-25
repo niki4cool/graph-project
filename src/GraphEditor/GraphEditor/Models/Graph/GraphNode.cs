@@ -8,7 +8,6 @@ namespace GraphEditor.Models.Graph
         public string Id { get; set; } = string.Empty;
         public float X { get; set; }
         public float Y { get; set; }
-
         public GraphNodeMeta Meta { get; set; } = default!;
     }
 }

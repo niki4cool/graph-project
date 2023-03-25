@@ -35,8 +35,9 @@ namespace GraphEditor.Models.CRUD
             return entity;
         }
 
-        public IQueryable<RecordT> AsQueryable()
+        public async Task<IQueryable<RecordT>> AsQueryable()
         {
+            await context.SaveChangesAsync();
             return records.AsQueryable<RecordT>();
         }
 

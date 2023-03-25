@@ -1,19 +1,18 @@
 using GraphEditor;
 using GraphEditor.Hubs;
 using GraphEditor.Models;
+using GraphEditor.Models.Auth;
 using GraphEditor.Models.Auth.Handlers;
 using GraphEditor.Models.Auth.User;
 using GraphEditor.Models.CRUD;
 using GraphEditor.Models.Graph;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
-
-Thread.Sleep(5 * 1000);
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -21,9 +20,9 @@ var configuration = builder.Configuration;
 
 services.AddCors(o =>
 {
-    o.AddPolicy(Environments.Development, p =>
+    o.AddPolicy(Environments.Development, c =>
     {
-        p.AllowAnyHeader()
+        c.AllowAnyHeader()
          .AllowAnyMethod()
          .SetIsOriginAllowed(_ => true)
          .AllowCredentials();
@@ -33,28 +32,24 @@ services.AddCors(o =>
 services.AddControllers();
 
 services.AddDbContext<GraphDBContext>(
-    options =>
+    c =>
     {
-        var connectionString = configuration["ConnectionStrings:DefaultConnection"];
-        options.UseNpgsql(connectionString);
+        var isContainered = Environment.OSVersion.Platform == PlatformID.Unix;
+        var connectionString = isContainered 
+        ? configuration["ConnectionStrings:DefaultConnection"]
+        : configuration["ConnectionStrings:LocalDefaultConnection"];
+        c.UseNpgsql(connectionString);
     });
 
-services.AddAuthorization(options =>
-{
-    options.AddPolicy(StringConstants.GraphCRUDPolicy, policy =>
-        policy.Requirements.Add(new OperationAuthorizationRequirement()));
-});
 
 services.AddTransient<UserRecordValidator>();
 
-services.AddTransient<IAuthorizationHandler, GraphAuthorizationCRUDHandler>();
+services.AddScoped<IRepository<GraphRecord>, GraphRepository>();
+services.AddScoped<IRepository<UserRecord>, UserRepository>();
+services.AddScoped<IUserStore<UserRecord>, UserStore>();
 
-services.AddTransient<IRepository<GraphRecord>, GraphRepository>();
-
-services.AddTransient<IRepository<UserRecord>, UserRepository>();
-services.AddTransient<IUserStore<UserRecord>, UserStore>();
-
-services.AddSignalR().AddJsonProtocol();
+services.AddSignalR()
+        .AddJsonProtocol();
 
 services.AddIdentityCore<UserRecord>();
 
@@ -65,23 +60,29 @@ services.AddSpaStaticFiles(c =>
     c.RootPath = "react-app";
 });
 
-services.AddAuthentication(options =>
+var keySecret = configuration["JwtSigningKey"];
+var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keySecret));
+
+services.AddTransient(_ => new JwtSignInHandler(symmetricKey));
+
+services.AddAuthentication().AddJwtBearer(options =>
 {
-    options.DefaultChallengeScheme = StringConstants.TokenAuthenticationDefaultScheme;
-
-    // you can also skip this to make the challenge scheme handle the forbid as well
-    options.DefaultForbidScheme = StringConstants.TokenAuthenticationDefaultScheme;
-
-    // of course you also need to register that scheme, e.g. using
-    options.AddScheme<TokenAuthentificationHandler>(StringConstants.TokenAuthenticationDefaultScheme, StringConstants.TokenAuthenticationDefaultScheme);
+    options.TokenValidationParameters.ValidateIssuerSigningKey = true;
+    options.TokenValidationParameters.IssuerSigningKey = symmetricKey;
+    options.TokenValidationParameters.ValidAudience = JwtSignInHandler.TokenAudience;
+    options.TokenValidationParameters.ValidIssuer = JwtSignInHandler.TokenIssuer;
 });
 
-services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-       .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-       {
-           options.Events.OnRedirectToAccessDenied = ReplaceRedirector(HttpStatusCode.Forbidden, options.Events.OnRedirectToAccessDenied);
-           options.Events.OnRedirectToLogin = ReplaceRedirector(HttpStatusCode.Unauthorized, options.Events.OnRedirectToLogin);
-       });
+services.AddSingleton<IAuthorizationHandler, GraphAuthorizationCRUDHandler>();
+
+services.AddAuthorization(options =>
+{
+    options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+       .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+       .RequireAuthenticatedUser().Build());
+    //options.AddPolicy(StringConstants.GraphCRUDPolicy, policy =>
+    //    policy.Requirements.Add(Operations.Create));
+});
 
 var app = builder.Build();
 
@@ -111,7 +112,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<GraphHub>("/api/signalr/graph");
 });
 
-
 using (var scope = app.Services.CreateScope())
 {
     scope.ServiceProvider.GetRequiredService<GraphDBContext>().Database.Migrate();
@@ -125,15 +125,3 @@ app.UseSpa(spa =>
 
 app.MapControllers();
 app.Run();
-
-static Func<RedirectContext<CookieAuthenticationOptions>, Task> ReplaceRedirector(HttpStatusCode statusCode,
-    Func<RedirectContext<CookieAuthenticationOptions>, Task> existingRedirector) =>
-    context =>
-    {
-        if (context.Request.Path.StartsWithSegments("/api"))
-        {
-            context.Response.StatusCode = (int)statusCode;
-            return Task.CompletedTask;
-        }
-        return existingRedirector(context);
-    };

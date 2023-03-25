@@ -2,6 +2,7 @@
 using GraphEditor.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GraphEditor.Migrations
 {
     [DbContext(typeof(GraphDBContext))]
-    partial class GraphDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230227143515_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,13 +101,7 @@ namespace GraphEditor.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<string>("CreatorId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
 
                     b.ToTable("GraphRecord");
                 });
@@ -114,29 +111,14 @@ namespace GraphEditor.Migrations
                     b.Property<string>("CanEditId")
                         .HasColumnType("text");
 
-                    b.Property<string>("EditorsId")
+                    b.Property<string>("CanEditId1")
                         .HasColumnType("text");
 
-                    b.HasKey("CanEditId", "EditorsId");
+                    b.HasKey("CanEditId", "CanEditId1");
 
-                    b.HasIndex("EditorsId");
+                    b.HasIndex("CanEditId1");
 
-                    b.ToTable("Editors", (string)null);
-                });
-
-            modelBuilder.Entity("GraphRecordUserRecord1", b =>
-                {
-                    b.Property<string>("CanViewId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ViewersId")
-                        .HasColumnType("text");
-
-                    b.HasKey("CanViewId", "ViewersId");
-
-                    b.HasIndex("ViewersId");
-
-                    b.ToTable("Viewers", (string)null);
+                    b.ToTable("GraphRecordUserRecord");
                 });
 
             modelBuilder.Entity("GraphEditor.Models.Graph.GraphLink", b =>
@@ -187,17 +169,6 @@ namespace GraphEditor.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GraphEditor.Models.Graph.GraphRecord", b =>
-                {
-                    b.HasOne("GraphEditor.Models.Auth.User.UserRecord", "Creator")
-                        .WithMany("Creations")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
             modelBuilder.Entity("GraphRecordUserRecord", b =>
                 {
                     b.HasOne("GraphEditor.Models.Graph.GraphRecord", null)
@@ -208,29 +179,9 @@ namespace GraphEditor.Migrations
 
                     b.HasOne("GraphEditor.Models.Auth.User.UserRecord", null)
                         .WithMany()
-                        .HasForeignKey("EditorsId")
+                        .HasForeignKey("CanEditId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("GraphRecordUserRecord1", b =>
-                {
-                    b.HasOne("GraphEditor.Models.Graph.GraphRecord", null)
-                        .WithMany()
-                        .HasForeignKey("CanViewId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GraphEditor.Models.Auth.User.UserRecord", null)
-                        .WithMany()
-                        .HasForeignKey("ViewersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GraphEditor.Models.Auth.User.UserRecord", b =>
-                {
-                    b.Navigation("Creations");
                 });
 
             modelBuilder.Entity("GraphEditor.Models.Graph.GraphRecord", b =>

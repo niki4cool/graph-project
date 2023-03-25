@@ -5,12 +5,12 @@ namespace GraphEditor.Models.Auth
     public static class Operations
     {
         public static OperationAuthorizationRequirement Create =
-            new OperationAuthorizationRequirement { Name = nameof(Create) };
+            new() { Name = nameof(Create) };
         public static OperationAuthorizationRequirement Read =
-            new OperationAuthorizationRequirement { Name = nameof(Read) };
+            new() { Name = nameof(Read) };
         public static OperationAuthorizationRequirement Update =
-            new OperationAuthorizationRequirement { Name = nameof(Update) };
+            new() { Name = nameof(Update) };
         public static OperationAuthorizationRequirement Delete =
-            new OperationAuthorizationRequirement { Name = nameof(Delete) };
+            new() { Name = nameof(Delete) };
     }
 }

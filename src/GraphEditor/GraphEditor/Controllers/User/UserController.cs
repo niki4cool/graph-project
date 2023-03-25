@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
+using GraphEditor.Models.Auth.Handlers;
 
 namespace GraphEditor.Controllers.User
 {
@@ -25,28 +26,41 @@ namespace GraphEditor.Controllers.User
     public class UserController : Controller
     {
         private readonly IUserStore<UserRecord> userStore;
+        private readonly IRepository<GraphRecord> graphRepository;
+
         private readonly UserRecordValidator userValidator;
         private readonly ILookupNormalizer keyNormalizer;
 
+        private readonly JwtSignInHandler jwtSignInHandler;
+
         public UserController(IUserStore<UserRecord> userStore,
+                              IRepository<GraphRecord> graphRepository,
                               ILookupNormalizer keyNormalizer,
-                              UserRecordValidator userValidator )
+                              UserRecordValidator userValidator,
+                              JwtSignInHandler jwtSignInHandler)
         {
             this.userStore = userStore;
             this.keyNormalizer = keyNormalizer;
             this.userValidator = userValidator;
+            this.jwtSignInHandler = jwtSignInHandler;
+            this.graphRepository = graphRepository;
         }
 
-        [HttpPut]
+        [HttpPut("Register")]
         public async Task<ActionResult> Create([FromBody] CreateUserRequest request)
         {
+            var normalized = keyNormalizer.NormalizeName(request.UserName);
+            var user = await userStore.FindByNameAsync(normalized, CancellationToken.None);
+            if (user != null)
+                return base.BadRequest("Username already exists");
+
             var result = await userValidator.CreateAsync(request.UserName, request.Email, request.Password);
             if (result == null || !result.Succeeded)
-                return base.BadRequest();
-            return await GetByName(request.UserName);            
+                return base.BadRequest("Unable to create new user");
+            return await GetByName(request.UserName);
         }
 
-        [HttpGet("{userName}")]
+        [HttpGet("name/{userName}")]
         public async Task<ActionResult> GetByName(string userName)
         {
             var normalized = keyNormalizer.NormalizeName(userName);
@@ -57,11 +71,11 @@ namespace GraphEditor.Controllers.User
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Email = user.Email,                
+                Email = user.Email,
             });
         }
 
-        [HttpGet("{Id}")]
+        [HttpGet("id/{Id}")]
         public async Task<ActionResult> GetById(string Id)
         {
             var user = await userStore.FindByIdAsync(Id, CancellationToken.None);
@@ -81,14 +95,14 @@ namespace GraphEditor.Controllers.User
             var user = await userStore.FindByIdAsync(Id, CancellationToken.None);
             if (user == null)
                 return base.NotFound();
-            await userStore.DeleteAsync(user, CancellationToken.None);           
+            await userStore.DeleteAsync(user, CancellationToken.None);
             return Ok();
         }
 
         [HttpPost("Login")]
         public async Task<ActionResult> Login([FromBody] LoginRequest request)
         {
-            
+
             var userValid = await userValidator.IsValidUser(request.UserName, request.Password);
             if (!userValid)
                 return UnprocessableEntity();
@@ -98,18 +112,45 @@ namespace GraphEditor.Controllers.User
             if (user == null)
                 return base.NotFound();
 
+            var identity = await CreateNameIdentity(user);
+            var jwt = jwtSignInHandler.BuildJwt(new ClaimsPrincipal(identity)).ToString();
+            var json = "{\"jwt\":\"" + jwt + "\"}";
+
+            return Ok(json);
+        }
+
+        [HttpGet("Claims")]
+        [Authorize]
+        public async Task<ActionResult> Get()
+        {
+            int i = 0;
+            return Ok(new
+            {
+                Id = User.Identity.Name,
+                Claims = User.Claims.ToDictionary(claim => (++i).ToString(), claim => claim.Value)
+            });
+        }        
+
+        private async Task<ClaimsIdentity> CreateNameIdentity(UserRecord user)
+        {
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
             identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
-            foreach (var graph in user.CanEdit)
-            {
-                identity.AddClaim(new Claim(ClaimTypes.Role, graph.EditRole));
-            }
-
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
-
-            return Ok();
+            return identity;
         }
 
+        private async Task<ClaimsIdentity> CreateFullIdentity(UserRecord user)
+        {
+            var identity =  await CreateNameIdentity(user);
+            await graphRepository.AsQueryable();
+            //updates graph repo
+            foreach (var graph in user.CanEdit)
+                identity.AddClaim(new Claim(ClaimTypes.Role, graph.EditRole));
+            foreach (var graph in user.CanView)
+                identity.AddClaim(new Claim(ClaimTypes.Role, graph.ViewRole));
+            foreach (var graph in user.Creations)
+                identity.AddClaim(new Claim(ClaimTypes.Role, graph.EditRole));
+            return identity;
+        }
     }
 }

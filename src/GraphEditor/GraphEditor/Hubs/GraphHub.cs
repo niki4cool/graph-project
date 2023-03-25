@@ -1,4 +1,5 @@
-﻿using GraphEditor.Models.CRUD;
+﻿using GraphEditor.Models.Auth;
+using GraphEditor.Models.CRUD;
 using GraphEditor.Models.Graph;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -27,7 +28,7 @@ namespace GraphEditor.Hubs
             }
 
             var authorizationResult = await authorizationService
-                .AuthorizeAsync(Context.User, graph, StringConstants.GraphCRUDPolicy);
+                .AuthorizeAsync(Context.User, graph, Operations.Read);
             if (!authorizationResult.Succeeded)
             {
                 Context.Abort();
@@ -92,14 +93,14 @@ namespace GraphEditor.Hubs
         private async Task<bool> CanEdit(GraphRecord graph)
         {
             var authorizationResult = await authorizationService
-                .AuthorizeAsync(Context.User, graph, StringConstants.GraphCRUDPolicy);
+                .AuthorizeAsync(Context.User, graph, Operations.Update);
             return authorizationResult.Succeeded;
         }
 
         private async Task<bool> CanView(GraphRecord graph)
         {
             var authorizationResult = await authorizationService
-                .AuthorizeAsync(Context.User, graph, StringConstants.GraphCRUDPolicy);
+                .AuthorizeAsync(Context.User, graph, Operations.Read);
             return authorizationResult.Succeeded;
         }
 

@@ -9,6 +9,10 @@ namespace GraphEditor.Models.Graph
         public List<GraphLink> Links { get; set; } = new();
         public List<GraphNode> Nodes { get; set; } = new();
 
+        public UserRecord Creator { get; set; } = new();
+        public List<UserRecord> Editors { get; set; } = new();
+        public List<UserRecord> Viewers { get; set; } = new();
+
         public string EditRole => $"Graph-{Id}-Editor";
         public string ViewRole => $"Graph-{Id}-Viewer";
 

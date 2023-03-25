@@ -11,5 +11,7 @@ namespace GraphEditor.Models.Auth.User
         public string PasswordHash { get; set; } = string.Empty;
 
         public List<GraphRecord> CanEdit { get; set; } = new();
+        public List<GraphRecord> CanView { get; set; } = new();
+        public List<GraphRecord> Creations { get; set; } = new();
     }
 }

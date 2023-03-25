@@ -43,9 +43,7 @@ const MainPage: FC = React.memo(() => {
         <div className={styles.forms}>
           <FormikProvider value={formik}>
             <Form noValidate onSubmit={formik.handleSubmit}>
-              <FloatingLabel label="Select graph name" controlId="graphId">
-                <FormInput field="graphId" placeholder="Enter"/>
-              </FloatingLabel>
+                <FormInput field="graphId" placeholder="Graph name"/>
               <Button
                 type="submit"
                 variant="light"

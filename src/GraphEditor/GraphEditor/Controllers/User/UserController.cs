@@ -112,10 +112,9 @@ namespace GraphEditor.Controllers.User
             if (user == null)
                 return base.NotFound();
 
-            var identity = await CreateNameIdentity(user);
+            var identity = await IdentityHelper.CreateNameIdentity(user);
             var jwt = jwtSignInHandler.BuildJwt(new ClaimsPrincipal(identity)).ToString();
-            var json = "{\"jwt\":\"" + jwt + "\"}";
-
+            var json = JsonSerializer.Serialize(new { name = request.UserName, token = jwt });
             return Ok(json);
         }
 
@@ -129,9 +128,12 @@ namespace GraphEditor.Controllers.User
                 Id = User.Identity.Name,
                 Claims = User.Claims.ToDictionary(claim => (++i).ToString(), claim => claim.Value)
             });
-        }        
+        }
+    }
 
-        private async Task<ClaimsIdentity> CreateNameIdentity(UserRecord user)
+    public static class IdentityHelper
+    {
+        public static async Task<ClaimsIdentity> CreateNameIdentity(UserRecord user)
         {
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
@@ -139,10 +141,16 @@ namespace GraphEditor.Controllers.User
             return identity;
         }
 
-        private async Task<ClaimsIdentity> CreateFullIdentity(UserRecord user)
+        public static async Task<ClaimsIdentity> CreateFullIdentity(UserRecord user, IRepository<GraphRecord> repository)
         {
-            var identity =  await CreateNameIdentity(user);
-            await graphRepository.AsQueryable();
+            var identity = await CreateNameIdentity(user);
+            foreach(var graph in await repository.AsQueryable())
+            {
+                repository.Update(graph);
+                //if (graph.Creator == user)
+                //    user.Creations.Add(graph);
+            }
+            
             //updates graph repo
             foreach (var graph in user.CanEdit)
                 identity.AddClaim(new Claim(ClaimTypes.Role, graph.EditRole));

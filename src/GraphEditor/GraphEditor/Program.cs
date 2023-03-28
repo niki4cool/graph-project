@@ -42,7 +42,7 @@ services.AddDbContext<GraphDBContext>(
     });
 
 
-services.AddTransient<UserRecordValidator>();
+services.AddScoped<UserRecordValidator>();
 
 services.AddScoped<IRepository<GraphRecord>, GraphRepository>();
 services.AddScoped<IRepository<UserRecord>, UserRepository>();
@@ -63,7 +63,7 @@ services.AddSpaStaticFiles(c =>
 var keySecret = configuration["JwtSigningKey"];
 var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keySecret));
 
-services.AddTransient(_ => new JwtSignInHandler(symmetricKey));
+services.AddSingleton(_ => new JwtSignInHandler(symmetricKey));
 
 services.AddAuthentication().AddJwtBearer(options =>
 {

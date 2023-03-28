@@ -1,45 +1,51 @@
-import React, {FC, useEffect, useState} from "react";
-import {Navigate, useNavigate, useParams} from "react-router-dom";
-import {graphsApi} from "graph/graphsApi";
-import {isFetchBaseQueryError} from "rtkQuery";
+import React, { FC, useEffect, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { graphsApi } from "graph/graphsApi";
+import { isFetchBaseQueryError } from "rtkQuery";
 import ConnectingPage from "graph/pages/ConnectingPage";
 import NotFoundPage from "graph/pages/NotFoundPage";
 import ErrorPage from "graph/pages/ErrorPage";
 import OnlineGraph from "graph/OnlineGraph";
 
 const GraphPage: FC = React.memo(() => {
-  const {graphId} = useParams();
-  const navigate = useNavigate();
-  const {
-    error: getError,
-    isSuccess: getSuccess,
-    isLoading
-  } = graphsApi.useGetGraphQuery(graphId || "",{});
-  const [graphCreated, setGraphCreated] = useState(false);
+    const [putGraph, mutation] = graphsApi.usePutGraphMutation();
+    const { graphId } = useParams();
+    const navigate = useNavigate();
+    const {
+        error: getError,
+        isSuccess: getSuccess,
+        isLoading
+    } = graphsApi.useGetGraphQuery(graphId || "", {});
+    const [graphCreated, setGraphCreated] = useState(false);
 
-  useEffect(() => {
-    if (getSuccess && !isLoading)
-      setGraphCreated(true);
-  }, [getSuccess, isLoading]);
+    var error = "";
+    useEffect(() => {
+        if (getSuccess && !isLoading)
+            setGraphCreated(true);
+    }, [getSuccess, isLoading]);
 
-  if (!graphId)
-    return <Navigate to="/"/>;
+    if (!graphId)
+        return <Navigate to="/" />;
 
-  if (graphCreated)
-    return <OnlineGraph graphId={graphId}/>;
+    if (graphCreated)
+        return <OnlineGraph graphId={graphId} />;
 
-  if (isFetchBaseQueryError(getError) && getError.status === 404) {
-    return <NotFoundPage
-      graphId={graphId}
-      onDismiss={() => navigate("/")}
-      onCreate={() => setGraphCreated(true)}
-    />;
-  }
+    if (isFetchBaseQueryError(getError) && getError.status === 401) {
+        return <Navigate to="../login" />;
+    }
 
-  if (getError)
-    return <ErrorPage graphId={graphId}/>;
+    if (isFetchBaseQueryError(getError) && getError.status === 404) {
+        return <NotFoundPage
+            graphId={graphId}
+            onDismiss={() => navigate("/")}
+            onCreate={() => setGraphCreated(true)}
+        />;
+    }
 
-  return <ConnectingPage graphId={graphId}/>;
+    if (getError)
+        return <ErrorPage graphId={graphId} error={error} />;
+
+    return <ConnectingPage graphId={graphId} />;
 
 });
 GraphPage.displayName = "GraphPage";

@@ -2,14 +2,10 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import graphDataSlice from "graph/graphDataSlice";
 import { graphsApi } from "graph/graphsApi";
-import userDataSlice from "auth/authSlice";
-import { authApi } from "auth/authApi";
 
 const rootReducer = combineReducers({
     [graphDataSlice.name]: graphDataSlice.reducer,
     [graphsApi.reducerPath]: graphsApi.reducer,
-    [userDataSlice.name]: userDataSlice.reducer,
-    [authApi.reducerPath]: authApi.reducer,
 });
 
 const store = configureStore({

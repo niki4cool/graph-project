@@ -3,11 +3,11 @@ import PromoGraph from "graph/PromoGraph";
 import styles from "graph/pages/MainPage.module.scss";
 import { useNavigate } from "react-router-dom";
 import { FormikProvider, useFormik } from "formik";
-import { Button, Form, Spinner } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import * as yup from "yup";
 import CenteredContainer from "components/CentredContainer";
-import { RegisterUser, authApi } from "auth/authApi";
 import FormInput from "../../components/forms/FormInput";
+import { RegisterUser, userService } from "../authApi";
 
 
 
@@ -20,7 +20,6 @@ const registerUserValidationSchema = yup.object({
 
 const RegisterPage: FC = React.memo(() => {
     const navigate = useNavigate();
-    const [registerUser, mutation] = authApi.useRegisterUserMutation();
 
 
     const formik = useFormik<RegisterUser>({
@@ -36,13 +35,11 @@ const RegisterPage: FC = React.memo(() => {
             setFieldError,
             setStatus
         }) => {
-            try {
-                const payload = await registerUser(data).unwrap();
-                console.log('fulfilled', payload);
-                navigate('../login');
-            } catch (error) {
-                setFieldError('userName', 'Error registering user');
-            }
+            userService.register(data).catch((reason) => {
+                setFieldError('userName', 'Error ' + reason);
+            }).then((value) => {
+                navigate('../login')
+            });
         }
     });
 
@@ -61,12 +58,8 @@ const RegisterPage: FC = React.memo(() => {
                                 type="submit"
                                 variant="light"
                                 className="w-100 mt-3"
-                                disabled={mutation.isLoading}
                             >
-                                {mutation.isLoading
-                                    ? <Spinner animation="border" />
-                                    : <> Start using Graph Editor</>
-                                }
+                                <> Start using Graph Editor</>
                             </Button>
                         </Form>
                     </FormikProvider>

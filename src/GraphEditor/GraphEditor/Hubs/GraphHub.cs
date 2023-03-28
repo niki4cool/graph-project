@@ -27,14 +27,6 @@ namespace GraphEditor.Hubs
                 return;
             }
 
-            var authorizationResult = await authorizationService
-                .AuthorizeAsync(Context.User, graph, Operations.Read);
-            if (!authorizationResult.Succeeded)
-            {
-                Context.Abort();
-                return;
-            }
-
             await Groups.AddToGroupAsync(Context.ConnectionId, graph.Id);
             await base.OnConnectedAsync();
         }
@@ -90,18 +82,20 @@ namespace GraphEditor.Hubs
                           .SendCoreAsync("OnGraphUpdate", new object[] { graph });
         }
 
-        private async Task<bool> CanEdit(GraphRecord graph)
+        private async Task<bool> CanEdit(GraphRecord graph) //TODO string token
         {
-            var authorizationResult = await authorizationService
-                .AuthorizeAsync(Context.User, graph, Operations.Update);
-            return authorizationResult.Succeeded;
+            //var authorizationResult = await authorizationService
+            //    .AuthorizeAsync(Context.User, graph, Operations.Update);
+            //return authorizationResult.Succeeded;
+            return true;
         }
 
         private async Task<bool> CanView(GraphRecord graph)
         {
-            var authorizationResult = await authorizationService
-                .AuthorizeAsync(Context.User, graph, Operations.Read);
-            return authorizationResult.Succeeded;
+            //var authorizationResult = await authorizationService
+            //    .AuthorizeAsync(Context.User, graph, Operations.Read);
+            //return authorizationResult.Succeeded;
+            return true;
         }
 
 

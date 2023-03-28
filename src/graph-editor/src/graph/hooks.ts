@@ -3,6 +3,8 @@ import { useAppDispatch, useAppSelector } from "store";
 import graphDataSlice, { GraphData, graphDataSelector, GraphNode } from "graph/graphDataSlice";
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { BASE_URL } from "vars";
+import { useSelector } from "react-redux";
+import { authUser } from "../auth/authApi";
 
 export const useGraphDataCopy = () => {
     const data = useAppSelector(graphDataSelector);
@@ -21,6 +23,7 @@ export const useServerSynchronization = (graphId?: string) => {
     const graphData = useAppSelector(state => state.graphData);
     const [ready, setReady] = useState(false);
     const [error, setError] = useState();
+    const token = authUser().token;
     const [dataUpdate, setDataUpdate] = useState<{ data: GraphData, isUpdating: boolean }>();
     const [graphDeleted, setGraphDeleted] = useState(false);
 
@@ -54,7 +57,8 @@ export const useServerSynchronization = (graphId?: string) => {
             return;
 
         const newConnection = new HubConnectionBuilder()
-            .withUrl(`${BASE_URL}/api/signalr/graph?graphId=${graphId}`)            
+            .withUrl(`${BASE_URL}/api/signalr/graph?graphId=${graphId}`,
+                { accessTokenFactory: () => "" + token })
             .withAutomaticReconnect()
             .configureLogging(LogLevel.None)
             .build();

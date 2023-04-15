@@ -6,7 +6,7 @@ namespace GraphEditor.Models.Graph
     public class GraphLink
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public GraphNode Source { get; set; }
-        public GraphNode Target { get; set; }
+        public string? Source { get; set; } = null;
+        public string? Target { get; set; } = null;
     }
 }

@@ -2,6 +2,7 @@
 using GraphEditor.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GraphEditor.Migrations
 {
     [DbContext(typeof(GraphDBContext))]
-    partial class GraphDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230407104227_NewGraphs")]
+    partial class NewGraphs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,15 +68,19 @@ namespace GraphEditor.Migrations
                     b.Property<string>("GraphDataId")
                         .HasColumnType("text");
 
-                    b.Property<string>("Source")
+                    b.Property<string>("SourceId")
                         .HasColumnType("text");
 
-                    b.Property<string>("Target")
+                    b.Property<string>("TargetId")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GraphDataId");
+
+                    b.HasIndex("SourceId");
+
+                    b.HasIndex("TargetId");
 
                     b.ToTable("GraphLink");
                 });
@@ -155,6 +162,18 @@ namespace GraphEditor.Migrations
                     b.HasOne("GraphEditor.Models.Graph.GraphData", null)
                         .WithMany("Links")
                         .HasForeignKey("GraphDataId");
+
+                    b.HasOne("GraphEditor.Models.Graph.GraphNode", "Source")
+                        .WithMany()
+                        .HasForeignKey("SourceId");
+
+                    b.HasOne("GraphEditor.Models.Graph.GraphNode", "Target")
+                        .WithMany()
+                        .HasForeignKey("TargetId");
+
+                    b.Navigation("Source");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("GraphEditor.Models.Graph.GraphNode", b =>

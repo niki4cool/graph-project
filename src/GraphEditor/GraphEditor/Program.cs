@@ -6,7 +6,6 @@ using GraphEditor.Models.Auth.Handlers;
 using GraphEditor.Models.Auth.User;
 using GraphEditor.Models.CRUD;
 using GraphEditor.Models.Graph;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

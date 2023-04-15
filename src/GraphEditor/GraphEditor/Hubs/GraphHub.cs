@@ -44,12 +44,31 @@ namespace GraphEditor.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task UpdateGraph(GraphRecord newGraph)
+        public async Task UpdateGraph(GraphData newData)
         {
             var graph = await GetContextGraph();
             var isValid = graph != null
-                       && newGraph.Id != graph.Id 
-                       && !await CanEdit(graph);
+                       && await CanEdit(graph);
+
+            if (!isValid)
+            {
+                Context.Abort();
+                return;
+            }
+            graph.Data.Links.Clear();
+            graph.Data.Links.AddRange(newData.Links);
+            graph.Data.Nodes.Clear();
+            graph.Data.Nodes.AddRange(newData.Nodes);
+            await graphRepository.Update(graph);
+            await Clients.GroupExcept(graph.Id, Context.ConnectionId)
+                  .SendCoreAsync("OnGraphUpdate", new object[] { newData });
+        }
+
+        public async Task RequestUpdate()
+        {
+            var graph = await GetContextGraph();
+            var isValid = graph != null
+                       && await CanView(graph);
 
             if (!isValid)
             {
@@ -57,29 +76,8 @@ namespace GraphEditor.Hubs
                 return;
             }
 
-            await graphRepository.Update(newGraph);
-            await Clients.GroupExcept(graph.Id, Context.ConnectionId)
-                  .SendCoreAsync("OnGraphUpdate", new object[] { newGraph });
-        }
-
-        public async Task RequestUpdate()
-        {
-            var graph = await GetContextGraph();
-            if (graph == null)
-            {
-                Context.Abort();
-                return;
-            }
-
-
-            if (!await CanView(graph))
-            {
-                Context.Abort();
-                return;
-            }
-
             await Clients.Caller
-                          .SendCoreAsync("OnGraphUpdate", new object[] { graph });
+                          .SendCoreAsync("OnGraphUpdate", new object[] { graph.Data });
         }
 
         private async Task<bool> CanEdit(GraphRecord graph) //TODO string token

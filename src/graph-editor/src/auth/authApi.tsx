@@ -22,7 +22,10 @@ export const userService = {
 };
 
 export function authUser() {
-    return JSON.parse(localStorage.getItem('user') as string);
+    let user = JSON.parse(localStorage.getItem('user') as string);
+    if (user === null)
+        return {};
+    return user;
 }
 
 export function authHeader() {
@@ -51,12 +54,13 @@ function login(user: LoginUser) {
 }
 
 function register(user: RegisterUser) {
-    const requestOptions = {        
+    const requestOptions = {
         method: "PUT",
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user)
     };
     return fetch(`${BASE_URL}/api/v1/User/register`, requestOptions)
-        .then(handleResponse);  
+        .then(handleResponse);
 }
 
 function logout() {
@@ -70,7 +74,6 @@ function handleResponse(response: Response) {
             if (response.status === 401) {
                 logout();
             }
-
             const error = (data && data.message) || response.statusText;
             return Promise.reject(error);
         }

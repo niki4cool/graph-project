@@ -61,9 +61,8 @@ const AddNodeContextMenu: FC<AddNodeContextMenuProps> =
                         <FormInput field="id" placeholder="Id" ref={startFocusRef}
                             className={`${styles.id} rounded-0 rounded-top`} />
                         <div className={styles.group}>
-                            <FormInput field="type" placeholder="Type" className={styles.type} />
                             <FormInput field="color" type={"color"} placeholder="Color" className={styles.colorInput} />
-                            <Button type="submit" variant="light" className={styles.btn}>Add node</Button>
+                            <Button type="submit" variant="light">Add node</Button>
                         </div>
                     </Form>
                 </FormikProvider>

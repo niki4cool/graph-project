@@ -5,6 +5,8 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signal
 import { BASE_URL } from "vars";
 import { useSelector } from "react-redux";
 import { authUser } from "../auth/authApi";
+import { log } from "console";
+import Graph from "./Graph";
 
 export const useGraphDataCopy = () => {
     const data = useAppSelector(graphDataSelector);
@@ -37,8 +39,13 @@ export const useServerSynchronization = (graphId?: string) => {
     }, [ready, dataUpdate?.data]);
 
     useEffect(() => {
-        if (!dataUpdate?.isUpdating)
+        if (!dataUpdate?.isUpdating) {
             connection?.send("UpdateGraph", graphData);
+            connection?.send("Message", "gamefis");
+            console.log("SendingUpdate:");
+            console.log(graphData);
+        }
+
 
         setDataUpdate({ data: graphData, isUpdating: false });
     }, [graphData]);
@@ -46,6 +53,8 @@ export const useServerSynchronization = (graphId?: string) => {
     useEffect(() => {
         connection?.on("OnGraphUpdate", (data: GraphData) => {
             setDataUpdate({ data, isUpdating: true });
+            console.log("GotUpdate:");
+            console.log(data);
         });
         connection?.on("OnGraphDelete", () => {
             setGraphDeleted(true);
@@ -71,7 +80,10 @@ export const useServerSynchronization = (graphId?: string) => {
                         setReady(true);
                     });
             })
-            .catch(reason => setError(reason));
+            .catch(reason => {
+                console.log(reason);
+                setError(reason)
+            });
 
         return () => {
             newConnection?.stop();

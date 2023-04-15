@@ -89,7 +89,6 @@ const Graph: FC<GraphProps> = React.memo(({ graphId }) => {
     return (
         <>
             <Toolbar>
-                <Username />
                 <ToolbarDropdown title="File">
                     <Dropdown.Menu>
                         <Dropdown.Header className="text-primary">

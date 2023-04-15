@@ -43,7 +43,7 @@ const MainPage = () => {
             <PromoGraph />
             <main className={styles.main}>
                 <h1 className={styles.header}>Graph Editor</h1>
-                <Username />
+                <h2>Welcome, <Username /></h2>
                 <p>Create and edit graphs online together with you team.</p>
                 <div className={styles.forms}>
                     <FormikProvider value={formik}>

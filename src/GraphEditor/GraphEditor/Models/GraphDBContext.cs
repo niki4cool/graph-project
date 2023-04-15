@@ -12,8 +12,7 @@ namespace GraphEditor.Models
         {
             //graph
             modelBuilder.Entity<GraphRecord>().HasKey(p => p.Id);
-            modelBuilder.Entity<GraphRecord>().HasMany(p => p.Links);
-            modelBuilder.Entity<GraphRecord>().HasMany(p => p.Nodes);
+            modelBuilder.Entity<GraphRecord>().HasOne(p => p.Data);            
             modelBuilder.Entity<GraphRecord>().HasMany(p => p.Editors)
                                               .WithMany(p => p.CanEdit)
                                               .UsingEntity(e => e.ToTable("Editors"));
@@ -23,12 +22,14 @@ namespace GraphEditor.Models
             modelBuilder.Entity<GraphRecord>().HasOne(p => p.Creator)
                                               .WithMany(p => p.Creations);
 
+            modelBuilder.Entity<GraphData>().HasKey(p => p.Id);
+            modelBuilder.Entity<GraphData>().HasMany(p => p.Links);
+            modelBuilder.Entity<GraphData>().HasMany(p => p.Nodes);
+
             modelBuilder.Entity<GraphNode>().HasKey(p => p.Id);
             modelBuilder.Entity<GraphNode>().OwnsOne(p => p.Meta);
 
             modelBuilder.Entity<GraphLink>().HasKey(p => p.Id);
-            modelBuilder.Entity<GraphLink>().HasOne(p => p.Source);
-            modelBuilder.Entity<GraphLink>().HasOne(p => p.Target);
 
             //user
             modelBuilder.Entity<UserRecord>().HasKey(p => p.Id);

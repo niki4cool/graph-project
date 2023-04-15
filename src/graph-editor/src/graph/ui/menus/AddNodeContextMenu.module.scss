@@ -15,14 +15,8 @@
 
 .group {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   width: 100%;
-}
-
-.group > input, .group > button {
-  flex: 1 1 auto;
-  width: 1%;
-  border-radius: 0;
 }
 
 .id{

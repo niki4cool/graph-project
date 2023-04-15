@@ -35,10 +35,10 @@ const RegisterPage: FC = React.memo(() => {
             setFieldError,
             setStatus
         }) => {
-            userService.register(data).catch((reason) => {
-                setFieldError('userName', 'Error ' + reason);
-            }).then((value) => {
+            userService.register(data).then((value) => {
                 navigate('../login')
+            }).catch((reason) => {
+                setFieldError('userName', 'Error ' + reason);
             });
         }
     });

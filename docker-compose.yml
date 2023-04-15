@@ -27,20 +27,6 @@ services:
       - "5021:80"
     depends_on:
       - db
-        
-  dev-server:
-    restart: always
-    build:
-      context: .
-      target: server
-    environment:
-      ConnectionStrings__DefaultConnection: Host=db;Database=graphDb;Username=postgres;Password=postgrespass
-      ASPNETCORE_ENVIRONMENT: Development
-    ports:
-      - "5021:80"
-    depends_on:
-      - db
-    
     
 volumes:
   postgresdata:

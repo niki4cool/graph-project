@@ -146,7 +146,7 @@ namespace GraphEditor.Controllers.User
             var identity = await CreateNameIdentity(user);
             foreach(var graph in await repository.AsQueryable())
             {
-                repository.Update(graph);
+                //repository.Update(graph);
                 //if (graph.Creator == user)
                 //    user.Creations.Add(graph);
             }

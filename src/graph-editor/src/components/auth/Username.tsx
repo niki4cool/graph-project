@@ -7,7 +7,7 @@ class Username extends Component {
     render() {
         var user = authUser();
         if (user)
-            return <h1>{user.name}</h1>;
+            return <>{user.name}</>;
         else
             <LoginButton />;
     }

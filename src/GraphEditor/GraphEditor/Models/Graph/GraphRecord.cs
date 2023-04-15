@@ -6,8 +6,8 @@ namespace GraphEditor.Models.Graph
     public class GraphRecord : EntityBase
     {
         public string Name = string.Empty;
-        public List<GraphLink> Links { get; set; } = new();
-        public List<GraphNode> Nodes { get; set; } = new();
+
+        public GraphData Data { get; set; } = new();
 
         public UserRecord Creator { get; set; } = new();
         public List<UserRecord> Editors { get; set; } = new();

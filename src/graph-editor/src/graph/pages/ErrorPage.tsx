@@ -7,9 +7,8 @@ const ErrorPage: FC<{ graphId: string, error: string }> = React.memo(({ graphId,
     return (
         <CenteredContainer>
             <h1 className="text-danger">
-                <h1>{error}</h1><b/>
+                <h1>{error}</h1><b />
                 Error occurred while connecting to graph <span className="text-primary"> {graphId}</span>
-                <LoginButton />
             </h1>
         </CenteredContainer>
     );

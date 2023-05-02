@@ -20,16 +20,16 @@ const FormInlineInput =
                         isValid={meta.touched && !meta.error}
                         isInvalid={meta.touched && !!meta.error}
                     />
+                    <Form.Control.Feedback
+                        type="invalid"
+                        tooltip
+                        style={
+                            { display: meta.touched && !!meta.error ? "block" : "none" }
+                        }>
+                        {meta.error}
+                    </Form.Control.Feedback>
                     {children}
                 </InputGroup>
-                <Form.Control.Feedback
-                    type="invalid"
-                    tooltip
-                    style={
-                        { display: meta.touched && !!meta.error ? "block" : "none" }
-                    }>
-                    {meta.error}
-                </Form.Control.Feedback>
             </>
         );
     });

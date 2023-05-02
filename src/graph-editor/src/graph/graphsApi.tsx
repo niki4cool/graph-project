@@ -4,7 +4,7 @@ import { authHeader } from "../auth/authApi";
 
 export const graphsApi = createApi({
     reducerPath: "graphsApi",
-    baseQuery: fetchBaseQuery({ baseUrl: `${BASE_URL}/api/v1/graph`}),
+    baseQuery: fetchBaseQuery({ baseUrl: `${BASE_URL}/api/v1/graph` }),
     keepUnusedDataFor: 0,
     endpoints: builder => ({
         getGraph: builder.query<void, string>({
@@ -20,6 +20,7 @@ export const graphsApi = createApi({
             query(id) {
                 return {
                     url: id,
+                    body: { "graphTypeStr": "Regular" },
                     method: "PUT",
                     headers: authHeader()
                 }
@@ -30,6 +31,15 @@ export const graphsApi = createApi({
                 return {
                     url: id,
                     method: "DELETE",
+                    headers: authHeader()
+                }
+            }
+        }),
+        getGraphs: builder.query<string[], void>({
+            query() {
+                return {
+                    url: "list",
+                    method: "GET",
                     headers: authHeader()
                 }
             }

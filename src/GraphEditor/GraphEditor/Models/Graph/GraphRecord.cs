@@ -7,7 +7,11 @@ namespace GraphEditor.Models.Graph
     {
         public string Name = string.Empty;
 
+        public GraphRecord GraphClass;
+
         public GraphData Data { get; set; } = new();
+
+        public GraphType Type { get; set; }
 
         public UserRecord Creator { get; set; } = new();
         public List<UserRecord> Editors { get; set; } = new();
@@ -17,5 +21,10 @@ namespace GraphEditor.Models.Graph
         public string ViewRole => $"Graph-{Id}-Viewer";
 
         public GraphRecord(string id) : base(id) { }
+    }
+
+    public enum GraphType
+    {
+        Regular, Class
     }
 }

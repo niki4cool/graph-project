@@ -12,18 +12,17 @@ import NodeLongName from "graph/ui/menus/NodeLongName";
 export interface LinksInfoProps {
     nodeId: string;
     onNodeClick?: (nodeId: string) => void;
+    onRemoveClick: (linkId: string) => void;
 }
 
-const LinksInfo: FC<LinksInfoProps> = React.memo(({ nodeId, onNodeClick }) => {
+const LinksInfo: FC<LinksInfoProps> = React.memo(({ nodeId, onNodeClick, onRemoveClick }) => {
     const asSourceLinks = useAppSelector(asSourceLinksSelector(nodeId));
     const asTargetLinks = useAppSelector(asTargetLinksSelector(nodeId));
-
-    const dispatch = useAppDispatch();
 
     const renderLink = (link: GraphLink, nodeId: string) =>
         <ListItem
             children={<NodeLongName nodeId={nodeId} />}
-            onRemoveClick={() => dispatch(graphDataSlice.actions.deleteLink(link))}
+            onRemoveClick={() => onRemoveClick && onRemoveClick(link.id)}
             onChildrenClick={() => onNodeClick && onNodeClick(nodeId)}
             key={link.target + link.source}
         />;

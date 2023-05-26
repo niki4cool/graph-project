@@ -9,13 +9,12 @@
 }
 
 .colorInput {
-  border-radius: 0;
-  max-width: 40px;
+    border-radius: 0;
+    height: 100%;
 }
 
 .group {
   display: flex;
-  align-items: center;
   width: 100%;
 }
 
@@ -26,6 +25,7 @@
 .type {
   border-bottom-left-radius: $border-radius !important;
   border-right-width: 0!important;
+  width: 100%;
 }
 
 .btn {

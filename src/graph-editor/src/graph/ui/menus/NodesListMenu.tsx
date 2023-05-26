@@ -13,7 +13,7 @@ export interface NodesListMenuProps {
 
 const NodesListMenu: FC<NodesListMenuProps> =
   React.memo(({nodes, onNodeDelete, onNodeClick}) => {
-
+      console.log(nodes);
     return (
       <Sidebar title="Nodes">
         <List

@@ -33,7 +33,7 @@ const LoginPage: FC = React.memo(() => {
             setStatus
         }) => {
             userService.login(data).then(result => {
-                navigate("../main");
+                navigate("../");
             }).catch((reason) => {
                 setFieldError('userName', 'Error ' + reason);
             })

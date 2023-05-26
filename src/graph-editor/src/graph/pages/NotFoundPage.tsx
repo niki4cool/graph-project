@@ -27,21 +27,14 @@ const NotFoundPage: FC<NotFoundPageProps> = React.memo(({ graphId, onCreate, onD
         <CenteredContainer>
             <h1>
                 Graph <Highlight text={graphId} /> not exist.
-            </h1>
-            <p>Do you want to create a <Highlight text={graphId} /> graph?</p>
+            </h1>            
             {isLoading
                 ? <Spinner animation="border" />
                 : (
                     <div>
                         <Button variant="secondary" className="me-5" onClick={onDismiss}>
-                            No
-                        </Button>
-                        <Button variant="light" onClick={() => {
-                            putGraph(graphId);
-                        }
-                        }>
-                            Yes
-                        </Button>
+                            Ok
+                        </Button>                        
                     </div>
                 )
             }

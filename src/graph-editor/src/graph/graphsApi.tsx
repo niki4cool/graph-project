@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "vars";
 import { authHeader } from "../auth/authApi";
+import { Graph } from "./graphDataSlice";
 
 export const graphsApi = createApi({
     reducerPath: "graphsApi",
@@ -10,17 +11,17 @@ export const graphsApi = createApi({
         getGraph: builder.query<void, string>({
             query(id) {
                 return {
-                    url: id,
+                    url: "id/" + id,
                     method: "GET",
                     headers: authHeader()
                 }
             }
         }),
-        putGraph: builder.mutation<void, string>({
-            query(id) {
+        putGraph: builder.mutation<void, { id: string, type: string, classId: string}>({
+            query(data) {
                 return {
-                    url: id,
-                    body: { "graphTypeStr": "Regular" },
+                    url: "id/" + data.id,
+                    body: { "graphType": data.type, "GraphClassId": data.classId },
                     method: "PUT",
                     headers: authHeader()
                 }
@@ -29,19 +30,21 @@ export const graphsApi = createApi({
         deleteGraph: builder.mutation<void, string>({
             query(id) {
                 return {
-                    url: id,
+                    url: "id/" + id,
                     method: "DELETE",
                     headers: authHeader()
                 }
             }
         }),
-        getGraphs: builder.query<string[], void>({
-            query() {
-                return {
-                    url: "list",
-                    method: "GET",
-                    headers: authHeader()
-                }
+        getGraphs: builder.query<Graph[], void>({
+            query: () => ({
+                url: "list",
+                method: "GET",
+                headers: authHeader()
+            }),
+            transformResponse: (response: { graphs: string[] }) => {
+                console.log(response);
+                return response.graphs.map(j => JSON.parse(j) as Graph);
             }
         })
     })

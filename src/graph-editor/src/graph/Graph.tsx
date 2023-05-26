@@ -22,13 +22,14 @@ import NodesListMenu from "graph/ui/menus/NodesListMenu";
 import CopyLabel from "components/CopyLabel";
 import Minimap from "graph/ui/Minimap";
 import { primaryLightColor } from "vars";
-import Username from "../components/auth/Username";
+import { HubConnection } from "@microsoft/signalr";
 
 export interface GraphProps {
     graphId: string;
+    connection: HubConnection;
 }
 
-const Graph: FC<GraphProps> = React.memo(({ graphId }) => {
+const Graph: FC<GraphProps> = React.memo(({ graphId, connection }) => {
     const graphRef = useRef<ForceGraphInstance>();
     const dispatch = useAppDispatch();
     const graphData = useGraphDataCopy();
@@ -54,10 +55,7 @@ const Graph: FC<GraphProps> = React.memo(({ graphId }) => {
         if (linkExist || selfLink)
             return;
 
-        dispatch(graphDataSlice.actions.addLink({
-            source: source.id,
-            target: target.id
-        }));
+        connection?.send("Connect", { FromId: source.id, ToId: target.id });
 
         resetLinkAdding();
     };
@@ -73,6 +71,7 @@ const Graph: FC<GraphProps> = React.memo(({ graphId }) => {
 
     const lookAtNode = (node: GraphNode) => {
         graphRef.current?.centerAt(node.x, node.y, 200);
+
     };
 
     const [deleteMenuShow, setDeleteMenuShow] = useState(false);
@@ -112,9 +111,14 @@ const Graph: FC<GraphProps> = React.memo(({ graphId }) => {
             />
             <HelpMenu show={helpMenuShow} onHide={() => setHelpMenuShow(false)} />
             <NodesListMenu
-                nodes={graphData?.nodes || []}
+                nodes={graphData?.nodes || ([] as GraphNode[])}
                 onNodeClick={lookAtNode}
-                onNodeDelete={node => dispatch(graphDataSlice.actions.deleteNode(node.id))}
+                onNodeDelete={node => {
+                    connection?.send("RemoveNode", {
+                        NodeId: node.id
+                    });
+                }
+                }
             />
 
             <Minimap startOpened graphData={graphData!} onNodeClick={lookAtNode} />
@@ -124,9 +128,10 @@ const Graph: FC<GraphProps> = React.memo(({ graphId }) => {
                     ref={graphRef}
                     graphData={graphData}
                     cooldownTicks={0}
-                    nodeColor={node => findNode(node.id)?.meta.color || primaryLightColor}
-                    nodeLabel={node => node.id?.toString() || ""}
+                    nodeColor={node => findNode(node.id)?.color || primaryLightColor}
+                    nodeLabel={node => findNode(node.id)?.name?.toString() || ""}
                     linkColor={() => "#ffffff"}
+                    linkWidth={() => 2 }
                     nodeRelSize={10}
                     linkDirectionalArrowLength={20}
                     linkDirectionalArrowRelPos={1}
@@ -134,13 +139,23 @@ const Graph: FC<GraphProps> = React.memo(({ graphId }) => {
                     height={height}
                     minZoom={0.5}
                     maxZoom={5}
+
                     onNodeDragEnd={(nodeObj: NodeObject) => {
                         const node = findNode(nodeObj.id);
                         if (!node)
                             return;
+                        console.log(nodeObj);
 
-                        const newNode: GraphNode = { ...node, x: nodeObj.x!, y: nodeObj.y! };
-                        dispatch(graphDataSlice.actions.updateNode(newNode));
+                        connection?.send("SetNodeMeta", {
+                            NodeId: nodeObj.id,
+                            Meta: {
+                                X: nodeObj.x,
+                                Y: nodeObj.y,
+                                Name: findNode(node.id)?.name?.toString(),
+                                NodeClass: node.nodeClass || "",
+                                Color: node.color
+                            }
+                        });
                     }}
 
                     onBackgroundRightClick={(event => {
@@ -183,8 +198,11 @@ const Graph: FC<GraphProps> = React.memo(({ graphId }) => {
                 }}
                 onDeleteNodeClick={() => {
                     setNodeCmPosition(undefined);
-                    if (rightClickedNode)
-                        dispatch(graphDataSlice.actions.deleteNode(rightClickedNode.id));
+                    if (rightClickedNode) {
+                        connection?.send("RemoveNode", {
+                            NodeId: rightClickedNode.id
+                        });
+                    }
                 }}
             />
             <AddLinkHelpMessage visible={addingLink} onCancel={resetLinkAdding} />
@@ -192,16 +210,17 @@ const Graph: FC<GraphProps> = React.memo(({ graphId }) => {
                 position={addNodeCmPosition}
                 onOutsideClick={() => setAddNodeCmPosition(undefined)}
                 onAdd={formData => {
-                    const newNode: GraphNode = {
-                        id: formData.id,
-                        x: addNodePosition.x,
-                        y: addNodePosition.y,
-                        meta: {
-                            color: formData.color,
-                            type: formData.type
+
+                    connection?.send("CreateNode", {
+                        Meta: {
+                            X: addNodePosition.x,
+                            Y: addNodePosition.y,
+                            Name: formData.id,
+                            NodeClass: formData.type || "",
+                            Color: formData.color
                         }
-                    };
-                    dispatch(graphDataSlice.actions.addNode(newNode));
+                    });
+
                     setAddNodeCmPosition(undefined);
                 }}
             />
@@ -213,6 +232,11 @@ const Graph: FC<GraphProps> = React.memo(({ graphId }) => {
                     const node = findNode(id);
                     if (node)
                         lookAtNode(node);
+                }}
+                onRemoveLinkClick={linkId => {
+                    connection?.send("RemoveEdge", {
+                        EdgeId: linkId
+                    });
                 }}
             />
         </>

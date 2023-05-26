@@ -1,11 +1,9 @@
 using GraphEditor;
+using GraphEditor.Auth;
+using GraphEditor.CRUD;
 using GraphEditor.Hubs;
-using GraphEditor.Models;
-using GraphEditor.Models.Auth;
-using GraphEditor.Models.Auth.Handlers;
-using GraphEditor.Models.Auth.User;
-using GraphEditor.Models.CRUD;
-using GraphEditor.Models.Graph;
+using GraphEditor.Model;
+using GraphEditor.Model.GraphModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -43,14 +41,13 @@ services.AddDbContext<GraphDBContext>(
 
 services.AddScoped<UserRecordValidator>();
 
-services.AddScoped<IRepository<GraphRecord>, GraphRepository>();
-services.AddScoped<IRepository<UserRecord>, UserRepository>();
-services.AddScoped<IUserStore<UserRecord>, UserStore>();
+services.AddScoped<IRepository<Graph>, GraphRepository>();
+services.AddScoped<IUserStore<User>, UserStore>();
 
 services.AddSignalR()
         .AddJsonProtocol();
 
-services.AddIdentityCore<UserRecord>();
+services.AddIdentityCore<User>();
 
 services.AddSwaggerGen();
 
@@ -60,16 +57,16 @@ services.AddSpaStaticFiles(c =>
 });
 
 var keySecret = configuration["JwtSigningKey"];
-var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keySecret));
+var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keySecret!));
 
-services.AddSingleton(_ => new JwtSignInHandler(symmetricKey));
+services.AddSingleton(_ => new JwtGenerator(symmetricKey));
 
 services.AddAuthentication().AddJwtBearer(options =>
 {
     options.TokenValidationParameters.ValidateIssuerSigningKey = true;
     options.TokenValidationParameters.IssuerSigningKey = symmetricKey;
-    options.TokenValidationParameters.ValidAudience = JwtSignInHandler.TokenAudience;
-    options.TokenValidationParameters.ValidIssuer = JwtSignInHandler.TokenIssuer;
+    options.TokenValidationParameters.ValidAudience = JwtGenerator.TokenAudience;
+    options.TokenValidationParameters.ValidIssuer = JwtGenerator.TokenIssuer;
 });
 
 services.AddSingleton<IAuthorizationHandler, GraphAuthorizationCRUDHandler>();

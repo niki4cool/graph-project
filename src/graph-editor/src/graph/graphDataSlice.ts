@@ -1,21 +1,27 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "store";
 
-export interface GraphNodeMeta {
-    color: string;
-    type?: string;
+export interface Graph {
+    id: string;
+    name: string;
+    graphType: string;
+    data: GraphData;
 }
 
 export interface GraphNode {
     id: string;
+    color: string;
+    name: string;
+    nodeClass: string;
     x: number;
     y: number;
-    meta: GraphNodeMeta;
 }
 
 export interface GraphLink {
+    id: string;
     source: string;
     target: string;
+    value: number;
 }
 
 export interface GraphData {
@@ -24,59 +30,67 @@ export interface GraphData {
 }
 
 const graphDataSlice = createSlice({
-    name: "graphData",
+    name: "graph",
     initialState: {
-        nodes: [],
-        links: []
-    } as GraphData,
+        id: "",
+        name: "",
+        graphType: "",
+        data: {
+            nodes: [],
+            links: []
+        }
+    } as Graph,
     reducers: {
-        setGraphData(state, action: PayloadAction<GraphData>) {
+        setGraphData(state, action: PayloadAction<Graph>) {
+            if (typeof (action.payload) === "string")
+                action.payload = JSON.parse(action.payload) as Graph;
             return action.payload;
         },
         updateNode(state, action: PayloadAction<GraphNode>) {
-            const nodeIndex = state.nodes.findIndex(x => x.id === action.payload.id);
+            const nodeIndex = state.data.nodes.findIndex(x => x.id === action.payload.id);
             if (nodeIndex < 0)
                 return;
 
-            state.nodes[nodeIndex] = action.payload;
+            state.data.nodes[nodeIndex] = action.payload;
         },
         addNode(state, action: PayloadAction<GraphNode>) {
-            state.nodes.push(action.payload);
+            state.data.nodes.push(action.payload);
         },
         deleteNode(state, { payload: nodeId }: PayloadAction<string>) {
-            const nodeIndex = state.nodes.findIndex(x => x.id === nodeId);
+            const nodeIndex = state.data.nodes.findIndex(x => x.id === nodeId);
             if (nodeIndex < 0)
                 return;
 
-            state.nodes.splice(nodeIndex, 1);
-            state.links = state.links.filter(x => x.source !== nodeId && x.target !== nodeId);
+            state.data.nodes.splice(nodeIndex, 1);
+            state.data.links = state.data.links.filter(x => x.source !== nodeId && x.target !== nodeId);
         },
         addLink(state, { payload }: PayloadAction<GraphLink>) {
-            if (state.nodes.find(x => x.id === payload.source) && state.nodes.find(x => x.id === payload.target)) {
-                state.links.push({ source: payload.source, target: payload.target } as any);
+            if (state.data.nodes.find(x => x.id === payload.source) && state.data.nodes.find(x => x.id === payload.target)) {
+                state.data.links.push({ source: payload.source, target: payload.target } as any);
             }
         },
         deleteLink(state, { payload }: PayloadAction<GraphLink>) {
-            const linkIndex = state.links
+            const linkIndex = state.data.links
                 .findIndex(x => x.source === payload.source && x.target === payload.target);
 
             if (linkIndex >= 0)
-                state.links.splice(linkIndex, 1);
+                state.data.links.splice(linkIndex, 1);
         }
     }
 });
 
 export default graphDataSlice;
 
-export const graphDataSelector = (state: RootState) => state.graphData;
+export const graphDataSelector = (state: RootState) => state.graph.data;
 
 export const nodeSelector = (id: string) =>
-    (state: RootState) => state.graphData.nodes.find(x => x.id === id);
+    (state: RootState) => state.graph.data.nodes.find(x => x.id === id);
 
 export const asTargetLinksSelector = (id: string) =>
-    (state: RootState) => state.graphData.links.filter(x => x.target === id);
+    (state: RootState) => state.graph.data.links.filter(x => x.target === id);
 
 export const asSourceLinksSelector = (id: string) =>
-    (state: RootState) => state.graphData.links.filter(x => x.source === id);
+    (state: RootState) => state.graph.data.links.filter(x => x.source === id);
 
-export const linksSelector = (state: RootState) => state.graphData.links;
+export const linksSelector = (state: RootState) => state.graph.data.links;
+export const nodesSelector = (state: RootState) => state.graph.data.nodes;

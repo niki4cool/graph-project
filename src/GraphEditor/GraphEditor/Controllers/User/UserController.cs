@@ -120,7 +120,7 @@ namespace GraphEditor.Controllers.User
 
         [HttpGet("Claims")]
         [Authorize]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult> Claims()
         {
             int i = 0;
             return Ok(new
@@ -128,7 +128,7 @@ namespace GraphEditor.Controllers.User
                 Id = User.Identity.Name,
                 Claims = User.Claims.ToDictionary(claim => (++i).ToString(), claim => claim.Value)
             });
-        }
+        }       
     }
 
     public static class IdentityHelper

@@ -14,7 +14,6 @@ import { RegisterUser, userService } from "../authApi";
 
 const registerUserValidationSchema = yup.object({
     userName: yup.string().required("Empty name"),
-    email: yup.string().email("Not a valid email").required("Empty email"),
     password: yup.string().required("Empty password"),
 });
 
@@ -25,7 +24,6 @@ const RegisterPage: FC = React.memo(() => {
     const formik = useFormik<RegisterUser>({
         initialValues: {
             userName: "",
-            email: "",
             password: "",
         },
 
@@ -47,19 +45,18 @@ const RegisterPage: FC = React.memo(() => {
         <CenteredContainer>
             <PromoGraph />
             <main className={styles.main}>
-                <h1>Graph Editor</h1>
+                <h1>Registration</h1>
                 <div className={styles.forms}>
                     <FormikProvider value={formik}>
                         <Form noValidate onSubmit={formik.handleSubmit}>
                             <FormInput field="userName" placeholder="Username" />
-                            <FormInput field="email" placeholder="Email" />
                             <FormInput field="password" type="password" placeholder="Password" />
                             <Button
                                 type="submit"
                                 variant="light"
                                 className="w-100 mt-3"
                             >
-                                <> Start using Graph Editor</>
+                                <>Register</>
                             </Button>
                         </Form>
                     </FormikProvider>

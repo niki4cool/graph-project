@@ -2,7 +2,6 @@ import { BASE_URL } from "vars";
 
 export interface RegisterUser {
     userName: string;
-    email: string;
     password: string;
 }
 

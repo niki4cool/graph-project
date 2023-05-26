@@ -6,10 +6,11 @@ import Graph from "graph/Graph";
 import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Highlight from "components/Highlight";
+import { HubConnection } from "@microsoft/signalr";
 
 const OnlineGraph: FC<{ graphId: string }> = React.memo(({ graphId }) => {
     const navigate = useNavigate();
-    const { connected, error, graphDeleted } = useServerSynchronization(graphId);
+    const { connected, error, graphDeleted, connection } = useServerSynchronization(graphId);
 
     if (graphDeleted)
         return (
@@ -27,7 +28,7 @@ const OnlineGraph: FC<{ graphId: string }> = React.memo(({ graphId }) => {
     if (!connected)
         return <ConnectingPage graphId={graphId} />;
 
-    return <Graph graphId={graphId} />;
+    return <Graph graphId={graphId} connection={connection as HubConnection} />;
 
 });
 OnlineGraph.displayName = "OnlineGraph";

@@ -1,6 +1,30 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEditor", "GraphEditor\GraphEditor.csproj", "{537C4185-679D-4E0F-BE78-96E9D3FFA8CC}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEditor", "GraphEditor\GraphEditor.csproj", "{537C4185-679D-4E0F-BE78-96E9D3FFA8CC}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "graph-editor", "..\graph-editor\", "{20ED325D-7BF7-4136-B897-F0313F4E97C3}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_64054"
+		Debug.AspNetCompiler.PhysicalPath = "..\graph-editor\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64054\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_64054"
+		Release.AspNetCompiler.PhysicalPath = "..\graph-editor\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64054\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "64054"
+		SlnRelativePath = "..\graph-editor\"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +36,15 @@ Global
 		{537C4185-679D-4E0F-BE78-96E9D3FFA8CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{537C4185-679D-4E0F-BE78-96E9D3FFA8CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{537C4185-679D-4E0F-BE78-96E9D3FFA8CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20ED325D-7BF7-4136-B897-F0313F4E97C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20ED325D-7BF7-4136-B897-F0313F4E97C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20ED325D-7BF7-4136-B897-F0313F4E97C3}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{20ED325D-7BF7-4136-B897-F0313F4E97C3}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DBF515E1-2D19-49F2-8049-5FDFBCBF19CC}
 	EndGlobalSection
 EndGlobal

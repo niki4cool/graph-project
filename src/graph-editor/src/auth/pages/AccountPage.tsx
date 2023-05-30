@@ -10,6 +10,7 @@ import PromoGraph from "../../graph/PromoGraph";
 import styles from "graph/pages/MainPage.module.scss";
 import { Button } from "react-bootstrap";
 import Username from "../../components/auth/Username";
+import { isFetchBaseQueryError } from "../../rtkQuery";
 
 const AccountPage: FC = React.memo(() => {
     const graphs = graphsApi.useGetGraphsQuery();
@@ -21,8 +22,16 @@ const AccountPage: FC = React.memo(() => {
             graphs.refetch();
     }, [mutation]);
 
+    useEffect(() => {
+        if (graphs.isError)
+            console.log(graphs.error);
+        if (isFetchBaseQueryError(graphs.error) && graphs.error.status == 401)
+            navigate("/login");
+    }, [graphs]);
+
     if (graphs.data == undefined)
         return <div>No data</div>;
+
     //Regular, ClassGraph, Free
     const freeGraphs = graphs.currentData?.filter(g => g.graphType == "Free") as Graph[];
     const instanceGraphs = graphs.currentData?.filter(g => g.graphType == "InstanceGraph") as Graph[];

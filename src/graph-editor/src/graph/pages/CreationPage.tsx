@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+﻿import React, { FC, useEffect, useState } from "react";
 import { Button, ButtonGroup, Dropdown, DropdownButton, FloatingLabel, Form, Spinner } from "react-bootstrap";
 import { FormikProvider, useFormik } from "formik";
 import styles from "graph/pages/MainPage.module.scss";
@@ -23,7 +23,7 @@ const GraphCreationPage: FC = React.memo(() => {
     const navigate = useNavigate();
     const graphs = graphsApi.useGetGraphsQuery();
     const [putGraph, { isLoading, isSuccess, isError, error }] = graphsApi.usePutGraphMutation();
-    const [graphType, setGraphType] = useState<string>("ClassGraph");
+    const [graphType, setGraphType] = useState<string>("Граф классов");
     const [classGraph, setClassGraph] = useState<string>("");
 
     useEffect(() => {
@@ -57,20 +57,20 @@ const GraphCreationPage: FC = React.memo(() => {
                 <h1>Graph creation</h1>
                 <FormikProvider value={formik}>
                     <Form noValidate onSubmit={formik.handleSubmit}>
-                        <FormInput field="graphId" placeholder="Graph name" />
-
+                        <FormInput field="graphId" placeholder="Имя графа" />
+                        
                         <ButtonGroup>
-                            <Button variant={graphType === "ClassGraph" ? "primary" : "light"} className="w-100 mt-3" onClick={() => setGraphType("ClassGraph")}>ClassGraph</Button>
-                            <Button variant={graphType === "InstanceGraph" ? "primary" : "light"} className="w-100 mt-3" onClick={() => setGraphType("InstanceGraph")}>InstanceGraph</Button>
+                            <Button variant={graphType === "ClassGraph" ? "primary" : "light"} className="w-100 mt-3" onClick={() => setGraphType("ClassGraph")}>Граф классов</Button>
+                            <Button variant={graphType === "InstanceGraph" ? "primary" : "light"} className="w-100 mt-3" onClick={() => setGraphType("InstanceGraph")}>Граф сущностей</Button>
                         </ButtonGroup>
                         <br />
 
                         {graphType === "ClassGraph" ? <></> :
-                            graphs.data == undefined ? <h4>Loading</h4> : <>
+                            graphs.data == undefined ? <h4>Загрузка</h4> : <>
 
                                 <Dropdown >
                                     <Dropdown.Toggle variant="light" className="w-100 mt-3">
-                                        {classGraph === "" ? "Select class graph" : classGraph}
+                                        {classGraph === "" ? "Выберите граф классов" : classGraph}
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         {(graphs.currentData?.filter(g => g.graphType == "ClassGraph") as Graph[]).map(g =>
@@ -85,7 +85,7 @@ const GraphCreationPage: FC = React.memo(() => {
                             variant="light"
                             className="w-100 mt-3"
                         >
-                            <>Create</>
+                            <>Создать</>
                         </Button>
                     </Form>
                 </FormikProvider>

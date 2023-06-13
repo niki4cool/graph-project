@@ -26,7 +26,7 @@ const NotFoundPage: FC<NotFoundPageProps> = React.memo(({ graphId, onCreate, onD
     return (
         <CenteredContainer>
             <h1>
-                Graph <Highlight text={graphId} /> not exist.
+                Графа <Highlight text={graphId} /> не существует.
             </h1>            
             {isLoading
                 ? <Spinner animation="border" />

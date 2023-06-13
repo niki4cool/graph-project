@@ -23,7 +23,7 @@ const NodeInspector: FC<NodeInspectorProps> = React.memo(({ node, onClose, visib
         return null;
 
     return (
-        <Offcanvas position="left" show={visible} topOffset={32}>
+        <Offcanvas position="left" show={visible}>
             <OffcanvasHeader closeButton onHide={onClose} className="pb-0" closeVariant="white">
                 <OffcanvasTitle><Highlight text={node.name} /></OffcanvasTitle>
             </OffcanvasHeader>

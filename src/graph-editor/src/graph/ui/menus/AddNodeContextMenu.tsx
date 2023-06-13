@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from "react";
+﻿import React, { FC, useEffect, useRef } from "react";
 import { Button, Form } from "react-bootstrap";
 import { FormikProvider, useFormik } from "formik";
 import styles from "graph/ui/menus/AddNodeContextMenu.module.scss";
@@ -35,7 +35,7 @@ const AddNodeContextMenu: FC<AddNodeContextMenuProps> =
             validate: data => {
                 const isIdUnique = graphData.nodes.findIndex(x => x.id === data.id)! < 0;
                 if (!isIdUnique)
-                    return { id: "Node with such id already exist" };
+                    return { id: "Вершина с таким именем уже существует" };
             },
             onSubmit: data => {
                 onAdd && onAdd(data);
@@ -59,12 +59,12 @@ const AddNodeContextMenu: FC<AddNodeContextMenuProps> =
                         onSubmit={formik.handleSubmit}
                         className={styles.form}
                     >
-                        <FormInput field="id" placeholder="Id" ref={startFocusRef}
+                        <FormInput field="id" placeholder="Имя" ref={startFocusRef}
                             className={`${styles.id} rounded-0 rounded-top`} />
                         <div className={styles.group}>
-                            <FormInput field="type" placeholder="Type" className={styles.type} />
+                            <FormInput field="type" placeholder="Тип" className={styles.type} />
                             <FormInput field="color" type={"color"} placeholder="Color" className={styles.colorInput} />
-                            <Button type="submit" variant="light" className={styles.btn}>Add node</Button>
+                            <Button type="submit" variant="light" className={styles.btn}>Добавить вершину</Button>
                         </div>
                     </Form>
                 </FormikProvider>

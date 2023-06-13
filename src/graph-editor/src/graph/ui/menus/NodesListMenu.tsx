@@ -1,4 +1,4 @@
-import React, {FC} from "react";
+﻿import React, {FC} from "react";
 import {GraphNode} from "graph/graphDataSlice";
 import List from "components/lists/List";
 import ListItem from "components/lists/ListItem";
@@ -15,10 +15,10 @@ const NodesListMenu: FC<NodesListMenuProps> =
   React.memo(({nodes, onNodeDelete, onNodeClick}) => {
       console.log(nodes);
     return (
-      <Sidebar title="Nodes">
+      <Sidebar title="Вершины">
         <List
-          header="Nodes"
-          emptyHeader="Graph does not contain any nodes"
+          header="Вершины"
+          emptyHeader="В графе нет вершин"
           items={nodes}
           renderItem={node =>
             <ListItem

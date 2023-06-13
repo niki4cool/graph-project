@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+﻿import React, { FC } from "react";
 import PromoGraph from "graph/PromoGraph";
 import styles from "graph/pages/MainPage.module.scss";
 
@@ -45,21 +45,35 @@ const LoginPage: FC = React.memo(() => {
             <PromoGraph />
             <main className={styles.main}>
                 <h1>Graph Editor</h1>
+                <br />
                 <div className={styles.forms}>
                     <FormikProvider value={formik}>
                         <Form noValidate onSubmit={formik.handleSubmit}>
-                            <FormInput field="userName" placeholder="Username" />
-                            <FormInput field="password" type="password" placeholder="Password" />
+                            <FormInput field="userName" placeholder="Логин" />
+                            <br />
+                            <FormInput field="password" type="password" placeholder="Пароль" />
+                            <br />
                             <Button
                                 type="submit"
                                 variant="light"
                                 className="w-100 mt-3"
                             >
-                                <>Login</>
+                                <>Войти</>
                             </Button>
                         </Form>
                     </FormikProvider>
                 </div>
+                <div>
+                    Нет аккаунта?
+                </div>
+                <a className=""
+
+                    onClick={() => {
+                        navigate("../register");
+                    }}
+                >
+                    Регистрация
+                </a>
             </main>
         </CenteredContainer>
     );

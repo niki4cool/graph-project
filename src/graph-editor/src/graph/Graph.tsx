@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+﻿import React, { FC, useEffect, useRef, useState } from "react";
 import ForceGraph, { NodeObject } from "react-force-graph-2d";
 import { ForceGraphInstance } from "force-graph";
 import { useAppDispatch, useAppSelector } from "store";
@@ -23,6 +23,7 @@ import CopyLabel from "components/CopyLabel";
 import Minimap from "graph/ui/Minimap";
 import { primaryLightColor } from "vars";
 import { HubConnection } from "@microsoft/signalr";
+import { useNavigate } from "react-router-dom";
 
 export interface GraphProps {
     graphId: string;
@@ -30,6 +31,7 @@ export interface GraphProps {
 }
 
 const Graph: FC<GraphProps> = React.memo(({ graphId, connection }) => {
+    const navigate = useNavigate();
     const graphRef = useRef<ForceGraphInstance>();
     const dispatch = useAppDispatch();
     const graphData = useGraphDataCopy();
@@ -71,7 +73,6 @@ const Graph: FC<GraphProps> = React.memo(({ graphId, connection }) => {
 
     const lookAtNode = (node: GraphNode) => {
         graphRef.current?.centerAt(node.x, node.y, 200);
-
     };
 
     const [deleteMenuShow, setDeleteMenuShow] = useState(false);
@@ -87,21 +88,21 @@ const Graph: FC<GraphProps> = React.memo(({ graphId, connection }) => {
 
     return (
         <>
+            <h1 onClick={() => navigate("../")} className={styles.header}>Graph Editor</h1>
             <Toolbar>
-                <ToolbarDropdown title="File">
+                <ToolbarDropdown title="Граф">
                     <Dropdown.Menu>
                         <Dropdown.Header className="text-primary">
                             <CopyLabel copyValue={window.location.href}>{graphId}</CopyLabel>
                         </Dropdown.Header>
-                        <ToolbarDropdownItem href="/">Home</ToolbarDropdownItem>
                         <Dropdown.Divider />
                         <ToolbarDropdownItem onClick={() => setDeleteMenuShow(true)}>
-                            Delete graph
+                            Удалить
                         </ToolbarDropdownItem>
                     </Dropdown.Menu>
                 </ToolbarDropdown>
-                <ToolbarItem onClick={() => graphRef.current?.zoomToFit(500)}>Zoom to fit</ToolbarItem>
-                <ToolbarItem onClick={() => setHelpMenuShow(true)}>Help</ToolbarItem>
+                <ToolbarItem onClick={() => graphRef.current?.zoomToFit(500)}>Масштабировать до графа</ToolbarItem>
+                <ToolbarItem onClick={() => setHelpMenuShow(true)}>Помощь</ToolbarItem>
             </Toolbar>
 
             <DeleteMenu
@@ -131,7 +132,7 @@ const Graph: FC<GraphProps> = React.memo(({ graphId, connection }) => {
                     nodeColor={node => findNode(node.id)?.color || primaryLightColor}
                     nodeLabel={node => findNode(node.id)?.name?.toString() || ""}
                     linkColor={() => "#ffffff"}
-                    linkWidth={() => 2 }
+                    linkWidth={() => 2}
                     nodeRelSize={10}
                     linkDirectionalArrowLength={20}
                     linkDirectionalArrowRelPos={1}

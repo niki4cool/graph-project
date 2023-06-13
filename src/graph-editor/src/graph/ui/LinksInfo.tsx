@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+﻿import React, { FC } from "react";
 import { useAppDispatch, useAppSelector } from "store";
 import graphDataSlice, {
     asSourceLinksSelector,
@@ -31,16 +31,16 @@ const LinksInfo: FC<LinksInfoProps> = React.memo(({ nodeId, onNodeClick, onRemov
         <>
             <List
                 items={asSourceLinks}
-                header="Points to"
-                emptyHeader="Doesn't point no any nodes"
+                header="Исходящие ребра"
+                emptyHeader="Нет исходящие ребер"
                 className="mb-3"
                 renderItem={link => renderLink(link, link.target)}
             />
 
             <List
                 items={asTargetLinks}
-                header="Points from"
-                emptyHeader="No nodes points to it"
+                header="Входящие ребра"
+                emptyHeader="Нет входящих ребер"
                 renderItem={link => renderLink(link, link.source)}
             />
         </>

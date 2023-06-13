@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+﻿import React, { FC } from "react";
 import PromoGraph from "graph/PromoGraph";
 import styles from "graph/pages/MainPage.module.scss";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ import { RegisterUser, userService } from "../authApi";
 
 const registerUserValidationSchema = yup.object({
     userName: yup.string().required("Empty name"),
-    password: yup.string().required("Empty password"),
+    password: yup.string().required("Empty password"),    
 });
 
 const RegisterPage: FC = React.memo(() => {
@@ -45,22 +45,36 @@ const RegisterPage: FC = React.memo(() => {
         <CenteredContainer>
             <PromoGraph />
             <main className={styles.main}>
-                <h1>Registration</h1>
+                <h1>Graph Editor</h1>
+                <br />
                 <div className={styles.forms}>
                     <FormikProvider value={formik}>
                         <Form noValidate onSubmit={formik.handleSubmit}>
-                            <FormInput field="userName" placeholder="Username" />
-                            <FormInput field="password" type="password" placeholder="Password" />
+                            <FormInput field="userName" placeholder="Логин" />
+                            <br />
+                            <FormInput field="password" type="password" placeholder="Пароль" />
+                            <br />
                             <Button
                                 type="submit"
                                 variant="light"
                                 className="w-100 mt-3"
                             >
-                                <>Register</>
+                                <>Зарегистрироваться</>
                             </Button>
                         </Form>
                     </FormikProvider>
                 </div>
+                <div>
+                    Уже есть аккаунт?
+                </div>
+                <a className=""
+
+                    onClick={() => {
+                        navigate("../login");
+                    }}
+                >
+                    Вход
+                </a>
             </main>
         </CenteredContainer>
     );

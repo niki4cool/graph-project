@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+﻿import React, { FC, useEffect, useRef, useState } from "react";
 import { GraphData, GraphNode } from "graph/graphDataSlice";
 import ForceGraph from "react-force-graph-2d";
 import styles from "./Minimap.module.scss";
@@ -29,7 +29,7 @@ const Minimap: FC<MinimapProps> = React.memo(({ graphData, onNodeClick, startOpe
                 className={cn(styles.button, { [styles.show]: show })}
                 onClick={() => setShow(!show)}
             >
-                Minimap
+                Карта
             </div>
             <ForceGraph
                 ref={graphRef}
